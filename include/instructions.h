@@ -25,6 +25,8 @@ INLINE void BNE();  // Branch on Result not Zero
 
 INLINE void BPL();  // Branch on Result Plus
 
+INLINE void BRK();  // Force Break
+
 INLINE void CLC();  // Clear Carry Flag
 
 INLINE void CLD();  // Clear Decimal Mode
@@ -34,6 +36,10 @@ INLINE void CLI();  // Clear Interrupt Disable Bit
 INLINE void CLV();  // Clear Overflow Flag
 
 INLINE void DEY();  // Decrement Index Y by One
+
+INLINE void JMP();  // Jump to New Location
+
+INLINE void JSR();  // Jump to New Location Saving Return Adress
 
 INLINE void LDA();  // Load Accumulator with Memory
 
@@ -58,6 +64,10 @@ INLINE void SED();  // Set Decimal Flag
 INLINE void SEI();  // Set Interrupt Disable Status
 
 INLINE void STA();  // Store Accumulator in Memory
+
+INLINE void STX();  // Store Index X in Memory
+
+INLINE void STY();  // Store Index Y in Memory
 
 void NIP();         // Not Implemented
 

@@ -9,9 +9,9 @@ int main()
     loadROM("rom");
     memoryDump(RAM_OFFSET, 0x30);
 
-    //run();
+    run();
 
-    disassemble("rom", "rom.asm");
+    //disassemble("rom", "rom.asm");
 
     return 0;
 }
