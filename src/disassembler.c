@@ -3,13 +3,13 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-char *instruction_table[256] =
+char *nemonic_table[256] =
 {
 //         00   01   02   03   04   05   06   07
 /* 00 */ "BRK", "ORA (%02X,X)", "", "", "", "ORA %02X", "ASL %02X", "",
          "PHP", "ORA #%02X", "ASL A", "", "", "ORA %02X%02X", "ASL %02X%02X", "",
 /* 10 */ "BPL %02X", "ORA (%02X),Y", "", "", "", "ORA %02X,X", "ASL %02X,X", "",
-         "CLC", "ORA %02X%02X,Y", "", "", "", "ORA %02X%02X,X", "",
+         "CLC", "ORA %02X%02X,Y", "", "", "", "ORA %02X%02X,X", "ASL %02X%02X,X", "",
 /* 20 */ "JSR %02X%02X", "AND (%02X,X)", "", "", "BIT %02X", "AND %02X", "ROL %02X", "",
          "PLP", "AND #%02X", "ROL A", "", "BIT %02X%02X", "AND %02X%02X", "ROL %02X%02X", "",
 /* 30 */ "BMI %02X", "AND (%02X),Y", "", "", "", "AND %02X,X", "ROL %02X,X", "", "SEC",
@@ -86,16 +86,16 @@ void disassemble(const char *in_filename, const char *out_filename)
         switch (bytes_table[(unsigned char) opcode])
         {
             case 1:
-                fprintf(out_file, instruction_table[(unsigned char) opcode]);
+                fprintf(out_file, nemonic_table[(unsigned char) opcode]);
             break;
             case 2:
                 next_byte = fgetc(in_file);
-                fprintf(out_file, instruction_table[(unsigned char) opcode], next_byte);
+                fprintf(out_file, nemonic_table[(unsigned char) opcode], next_byte);
             break;
             case 3:
                 next_byte = fgetc(in_file);
                 next_next_byte = fgetc(in_file);
-                fprintf(out_file, instruction_table[(unsigned char) opcode], next_next_byte, next_byte);
+                fprintf(out_file, nemonic_table[(unsigned char) opcode], next_next_byte, next_byte);
             break;
             default:
                 printf("Invalid opcode : %02X\n", (unsigned char) opcode);
@@ -103,8 +103,6 @@ void disassemble(const char *in_filename, const char *out_filename)
         }
         fprintf(out_file, "\n");
     }
-
-    printf("Ended on : %d\n", (int) opcode);
 
     fclose(in_file);
     fclose(out_file);
