@@ -1,14 +1,17 @@
 #include "cpu.h"
 #include "utils.h"
 #include "instructions.h"
+#include "disassembler.h"
 
 int main()
 {
     reset();
     loadROM("rom");
-    memoryDump(0, 0x30);
+    memoryDump(RAM_OFFSET, 0x30);
 
-    run();
+    //run();
+
+    disassemble("rom", "rom.asm");
 
     return 0;
 }

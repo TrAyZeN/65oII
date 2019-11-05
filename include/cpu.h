@@ -6,7 +6,7 @@ typedef unsigned short word;
 
 #ifndef DEF_CONSTS_
 #define DEF_CONSTS_
-static const unsigned int CLOCK_SPEED = 1000000;  // 1 MHz clock speed
+static const unsigned int CLOCK_SPEED  = 1000000;  // 1 MHz clock speed
 static const word STACK_OFFSET = 0x0100;
 static const word RAM_OFFSET   = 0x0200;
 #endif
