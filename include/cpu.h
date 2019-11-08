@@ -16,17 +16,15 @@ byte X, Y;          // 8-bit index registers
 byte SP;            // 8-bit stack pointer
 word PC;            // 16-bit program counter
 
-/*
- * SR Flags:
- * N    Negative
- * V    Overflow
- * -    ignored
- * B    Break
- * D    Decimal (use BCD for arithmetics)
- * I    Interrupt (IRQ disable)
- * Z    Zero
- * C    Carry
- */
+// SR flags
+#define N 0b10000000    // Negative
+#define V 0b01000000    // Overflow
+//      -                  ignored
+#define B 0b00010000    // Break
+#define D 0b00001000    // Decimal (use BCD for arithmetics)
+#define I 0b00000100    // Interrupt (IRQ disable)
+#define Z 0b00000010    // Zero
+#define C 0b00000001    // Carry
 byte SR;            // 8-bit status register [NV-BDIZC]
 
 /*
@@ -41,6 +39,15 @@ byte mem[0x10000];  // 64KB memory
 byte opcode;        // opcode
 
 byte counter;
+
+byte read_8();
+word read_16();
+
+void push(byte b);
+void pull();
+
+void set_flag(byte flag);
+void unset_flag(byte flag);
 
 void reset();
 void loadROM(const char *filename);

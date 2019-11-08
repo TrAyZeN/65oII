@@ -53,6 +53,31 @@ unsigned char instructions_cycles[256] =
 /* F0 */   7,   6,   0,   0,   0,   3,   5,   0,   3,   2,   2,   0,   0,   4,   6,   0
 };
 
+byte read_8()
+{
+    return mem[PC++];
+}
+
+word read_16()
+{
+    return mem[PC++] | (mem[PC++] << 8);
+}
+
+void push(byte b)
+{
+    mem[STACK_OFFSET + SP++] = B;
+}
+
+void set_flag(byte flag)
+{
+    SR |= flag;
+}
+
+void unset_flag(byte flag)
+{
+    SR &= 0xFF - flag;
+}
+
 void reset()
 {
     int i;
