@@ -30,13 +30,14 @@ word PC;            // 16-bit program counter
 byte SR;            // 8-bit status register [NV-BDIZC]
 
 /*
- *  256 bytes Stack from $0100 to $01FF
- *  RAM
+ *  $0000, $00FF  zero page RAM
+ *  $0100, $01FF  Stack
+ *  $0200, $FFF9  RAM
  *  $FFFA, $FFFB  NMI (Non-Maskable Interrupt) vector
  *  $FFFC, $FFFD  RES (Reset) vector
  *  $FFFE, $FFFF  IRQ (Interrupt Request) vector
  */
-byte mem[64000];    // 64KB memory
+byte mem[0x10000];  // 64KB memory
 byte opcode;        // opcode
 
 byte counter;

@@ -55,11 +55,15 @@ unsigned char instructions_cycles[256] =
 
 void reset()
 {
+    int i;
+
     PC = RAM_OFFSET;
     SP = 0;
     SR = 0;
     counter = 0;
-    // reset memory
+
+    for (i = 0; i < 64000; i++)
+        mem[i] = 0;
 }
 
 void loadROM(const char *filename)
@@ -77,9 +81,7 @@ void loadROM(const char *filename)
     }
 
     while ((op = fgetc(f)) != EOF)
-    {
         mem[PC++] = op;
-    }
 
     fclose(f);
 
@@ -93,7 +95,7 @@ void run()
         opcode = mem[PC++];
         instructions_table[opcode]();
 
-        sleep(1.0 / CLOCK_SPEED);
+        //sleep(1.0 / CLOCK_SPEED);
     }
 }
 

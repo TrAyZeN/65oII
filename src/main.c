@@ -1,7 +1,7 @@
 #include "cpu.h"
 #include "utils.h"
 #include "instructions.h"
-#include "disassembler.h"
+//#include "disassembler.h"
 
 int main()
 {

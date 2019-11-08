@@ -83,10 +83,76 @@ INLINE void unset_C()
 
 void ADC()
 {
-    if (opcode == 0x69)
+    switch (opcode)
     {
-        
+        case 0x69:
+            A += mem[PC++];
+        break;
+        case 0x65:
+            A += mem[mem[PC++]];
+        break;
+        case 0x75:
+            A += mem[mem[PC++] + X];
+        break;
+        case 0x6D:
+            A += mem[mem[PC] | (mem[PC+1] << 8)];
+            PC += 2;
+        break;
+        case 0x7D:
+            A += mem[(mem[PC] | (mem[PC+1] << 8)) + X];
+            PC += 2;
+        break;
+        case 0x79:
+            A += mem[(mem[PC] | (mem[PC+1] << 8)) + Y];
+            PC += 2;
+        break;
+        case 0x61:
+        break;
+        case 0x71:
+        break;
     }
+}
+
+INLINE void AND()
+{
+    switch (opcode)
+    {
+        case 0x29:
+            A &= mem[PC++];
+        break;
+        case 0x25:
+            A &= mem[mem[PC++]];
+        break;
+        case 0x35:
+            A &= mem[mem[PC++] + X];
+        break;
+        case 0x2D:
+            A &= mem[mem[PC] | (mem[PC+1] << 8)];
+            PC += 2;
+        break;
+        case 0x3D:
+            A &= mem[(mem[PC] | (mem[PC+1] << 8)) + X];
+            PC += 2;
+        break;
+        case 0x39:
+            A &= mem[(mem[PC] | (mem[PC+1] << 8)) + Y];
+            PC += 2;
+        break;
+        case 0x21:
+        break;
+        case 0x31:
+        break;
+    }
+
+    if (A == 0x00)
+        set_Z();
+    else
+        unset_Z();
+
+    if (A <= 0x7F)
+        unset_N();
+    else
+        set_N();
 }
 
 INLINE void BCC()
@@ -144,6 +210,7 @@ INLINE void BRK()
     SR |= 0b00000100;   // Set interrupt flag
     push(PC+2);
     push(SR);
+    PC = mem[0xFFFE] | (mem[0xFFFF] << 8);
 }
 
 INLINE void CLC()
@@ -164,6 +231,50 @@ INLINE void CLI()
 INLINE void CLV()
 {
     unset_V();
+}
+
+// TODO: carry flag
+INLINE void CMP()
+{
+    byte r;
+    switch (opcode)
+    {
+        case 0xC9:
+            r = A - mem[PC++];
+        break;
+        case 0xC5:
+            r = A - mem[mem[PC++]];
+        break;
+        case 0xD5:
+            r = A - mem[mem[PC++] + X];
+        break;
+        case 0xCD:
+            r = A - mem[mem[PC] | (mem[PC+1] << 8)];
+            PC += 2;
+        break;
+        case 0xDD:
+            r = A - mem[(mem[PC] | (mem[PC+1] << 8)) + X];
+            PC += 2;
+        break;
+        case 0xD9:
+            r = A - mem[(mem[PC] | (mem[PC+1] << 8)) + Y];
+            PC += 2;
+        break;
+        case 0xC1:
+        break;
+        case 0xD1:
+        break;
+    }
+
+    if (r == 0x00)
+        set_Z();
+    else
+        unset_Z();
+
+    if (r <= 0x7F)
+        unset_N();
+    else
+        set_N();
 }
 
 INLINE void DEY()
@@ -206,17 +317,19 @@ INLINE void LDA()
             A = mem[mem[PC++]];
         break;
         case 0xB5:
-            A = A;
+            A = mem[mem[PC++] + X];
         break;
         case 0xAD:
             A = mem[mem[PC] | (mem[PC+1] << 8)];
             PC += 2;
         break;
         case 0xBD:
-            A = A;
+            A = mem[(mem[PC] | (mem[PC+1] << 8)) + X];
+            PC += 2;
         break;
         case 0xB9:
-            A = A;
+            A = mem[(mem[PC] | (mem[PC+1] << 8)) + Y];
+            PC += 2;
         break;
         case 0xA1:
             A = A;
@@ -248,14 +361,15 @@ INLINE void LDX()
             X = mem[mem[PC++]];
         break;
         case 0xB6:
-            X = X;
+            X = mem[mem[PC++] + Y];
         break;
         case 0xAE:
             X = mem[mem[PC] | (mem[PC+1] << 8)];
             PC += 2;
         break;
         case 0xBE:
-            X = X;
+            X = mem[(mem[PC] | (mem[PC+1] << 8)) + Y];
+            PC += 2;
         break;
     }
 
@@ -281,14 +395,15 @@ INLINE void LDY()
             Y = mem[mem[PC++]];
         break;
         case 0xB4:
-            Y = Y;
+            Y = mem[mem[PC++] + X];
         break;
         case 0xAC:
             Y = mem[mem[PC] | (mem[PC+1] << 8)];
             PC += 2;
         break;
         case 0xBC:
-            Y = Y;
+            Y = mem[(mem[PC] | (mem[PC+1] << 8)) + X];
+            PC += 2;
         break;
     }
 
@@ -338,14 +453,19 @@ INLINE void STA()
             mem[mem[PC++]] = A;
         break;
         case 0x95:
+            mem[mem[PC++] + X] = A;
         break;
         case 0x8D:
             mem[mem[PC] | (mem[PC+1] << 8)] = A;
             PC += 2;
         break;
         case 0x9D:
+            mem[(mem[PC] | (mem[PC+1] << 8)) + X] = A;
+            PC += 2;
         break;
         case 0x99:
+            mem[(mem[PC] | (mem[PC+1] << 8)) + Y] = A;
+            PC += 2;
         break;
         case 0x81:
         break;
@@ -362,6 +482,8 @@ INLINE void STX()
             mem[PC++] = X;
         break;
         case 0x96:
+            mem[(mem[PC] | (mem[PC+1] << 8)) + Y] = X;
+            PC += 2;
         break;
         case 0x8E:
             mem[mem[PC] | (mem[PC+1] << 8)] = X;
@@ -378,6 +500,8 @@ INLINE void STY()
             mem[PC++] = Y;
         break;
         case 0x94:
+            mem[(mem[PC] | mem[PC+1] << 8) + X] = Y;
+            PC += 2;
         break;
         case 0x8C:
             mem[mem[PC] | (mem[PC+1] << 8)] = Y;
