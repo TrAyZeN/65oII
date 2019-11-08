@@ -108,3 +108,10 @@ void disassemble(const char *in_filename, const char *out_filename)
     fclose(out_file);
 }
 
+int main()
+{
+    disassemble ("rom", "rom.asm");
+
+    return 0;
+}
+
