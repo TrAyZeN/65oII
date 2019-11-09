@@ -37,6 +37,12 @@ INLINE void CLI();  // Clear Interrupt Disable Bit
 
 INLINE void CLV();  // Clear Overflow Flag
 
+INLINE void CMP();  // Compare Memory with Accumulator
+
+INLINE void CPX();  // Compare Memory and Index X
+
+INLINE void CPY();  // Compare Memory and Index Y
+
 INLINE void DEY();  // Decrement Index Y by One
 
 INLINE void JMP();  // Jump to New Location

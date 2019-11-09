@@ -25,9 +25,9 @@ void (* instructions_table[256])() =
 /* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, NIP, STA, NIP, IOP, IOP, STA, IOP, IOP,
 /* A0 */ LDY, LDA, LDX, IOP, LDY, LDA, LDX, IOP, NIP, LDA, NIP, IOP, LDY, LDA, LDX, IOP,
 /* B0 */ BCS, LDA, IOP, IOP, LDY, LDA, LDX, IOP, NIP, LDA, NIP, IOP, LDY, LDA, LDX, IOP,
-/* C0 */ NIP, NIP, IOP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NIP, IOP,
-/* D0 */ BNE, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLD, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* E0 */ NIP, NIP, IOP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NOP, IOP, NIP, NIP, NIP, IOP,
+/* C0 */ CPY, CMP, IOP, IOP, CPY, CMP, NIP, IOP, NIP, CMP, NIP, IOP, CPY, CMP, NIP, IOP,
+/* D0 */ BNE, CMP, IOP, IOP, IOP, CMP, NIP, IOP, CLD, CMP, IOP, IOP, IOP, CMP, NIP, IOP,
+/* E0 */ CPX, NIP, IOP, IOP, CPX, NIP, NIP, IOP, NIP, NIP, NOP, IOP, CPX, NIP, NIP, IOP,
 /* F0 */ BEQ, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SED, NIP, IOP, IOP, IOP, NIP, NIP, IOP
 };
 
@@ -89,7 +89,7 @@ void reset()
 
     PC = RAM_OFFSET;
     SP = 0;
-    SR = 0;
+    SR = 0b00100000;
     counter = 0;
 
     for (i = 0; i < 64000; i++)

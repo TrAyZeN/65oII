@@ -215,6 +215,60 @@ INLINE void CMP()
         set_flag(N);
 }
 
+INLINE void CPX()
+{
+    byte r;
+    switch (opcode)
+    {
+        case 0xE0:
+            r = X - read_8();
+        break;
+        case 0xE4:
+            r = X - mem[read_8()];
+        break;
+        case 0xEC:
+            r = X - mem[read_16()];
+        break;
+    }
+
+    if (r == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (r <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void CPY()
+{
+    byte r;
+    switch (opcode)
+    {
+        case 0xC0:
+            r = Y - read_8();
+        break;
+        case 0xC4:
+            r = Y - mem[read_8()];
+        break;
+        case 0xCC:
+            r = Y - mem[read_16()];
+        break;
+    }
+
+    if (r == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (r <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
 INLINE void DEY()
 {
     Y--;
