@@ -7,9 +7,9 @@
 #define INLINE __inline
 #endif
 
-void ADC();         // Add Memory to Accumulator with Carry
+INLINE void ADC();  // Add Memory to Accumulator with Carry
 
-void AND();         // AND Memory with Accumulator
+INLINE void AND();  // AND Memory with Accumulator
 
 INLINE void BCC();  // Branch on Carry Clear
 
@@ -17,7 +17,7 @@ INLINE void BCS();  // Branch on Carry Set
 
 INLINE void BEQ();  // Branch on Result Zero
 
-void BIT();         // Test Bits in Memory with Accumulator
+INLINE void BIT();  // Test Bits in Memory with Accumulator
 
 INLINE void BMI();  // Branch on Result Minus
 
@@ -26,6 +26,8 @@ INLINE void BNE();  // Branch on Result not Zero
 INLINE void BPL();  // Branch on Result Plus
 
 INLINE void BRK();  // Force Break
+
+INLINE void BVC();  // Branch on Overflow Clear
 
 INLINE void CLC();  // Clear Carry Flag
 

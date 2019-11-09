@@ -18,9 +18,9 @@ void (* instructions_table[256])() =
 /* 20 */ NIP, NIP, IOP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NIP, IOP,
 /* 30 */ BMI, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEC, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
 /* 40 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
-/* 50 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
+/* 50 */ BVC, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
 /* 60 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
-/* 70 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
+/* 70 */ BVS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
 /* 80 */ IOP, STA, IOP, IOP, STY, STA, STX, IOP, DEY, IOP, NIP, IOP, STY, STA, STX, IOP,
 /* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, NIP, STA, NIP, IOP, IOP, STA, IOP, IOP,
 /* A0 */ LDY, LDA, LDX, IOP, LDY, LDA, LDX, IOP, NIP, LDA, NIP, IOP, LDY, LDA, LDX, IOP,
@@ -78,6 +78,11 @@ void unset_flag(byte flag)
     SR &= 0xFF - flag;
 }
 
+byte is_flag_set(byte flag)
+{
+    return SR & flag;
+}
+
 void reset()
 {
     int i;
@@ -91,7 +96,7 @@ void reset()
         mem[i] = 0;
 }
 
-void loadROM(const char *filename)
+void load_ROM(const char *filename)
 {
     FILE *f;
     char op;

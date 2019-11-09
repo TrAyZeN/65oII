@@ -72,9 +72,14 @@ INLINE void AND()
         set_flag(N);
 }
 
+INLINE void ASL()
+{
+
+}
+
 INLINE void BCC()
 {
-    if (SR & 0b00000001 == 0)
+    if (!is_flag_set(C))
         PC = PC + (char) mem[PC];
     else
         PC++;
@@ -82,7 +87,7 @@ INLINE void BCC()
 
 INLINE void BCS()
 {
-    if (SR & 0b00000001 == 1)
+    if (is_flag_set(C))
         PC = PC + (char) mem[PC];
     else
         PC++;
@@ -90,17 +95,20 @@ INLINE void BCS()
 
 INLINE void BEQ()
 {
-    if (SR & 0b00000010 == 1)
+    if (is_flag_set(Z))
         PC = PC + (char) mem[PC];
     else
         PC++;
 }
 
-void BIT();         // Test Bits in Memory with Accumulator
+INLINE void BIT()
+{
+
+}
 
 INLINE void BMI()
 {
-    if (SR & 0b10000000 == 1)
+    if (is_flag_set(N))
         PC = PC + (char) mem[PC];
     else
         PC++;
@@ -108,7 +116,7 @@ INLINE void BMI()
 
 INLINE void BNE()
 {
-    if (SR & 0b00000010 == 0)
+    if (!is_flag_set(Z))
         PC = PC + (char) mem[PC];
     else
         PC++;
@@ -116,7 +124,7 @@ INLINE void BNE()
 
 INLINE void BPL()
 {
-    if (SR & 0b10000000 == 0)
+    if (!is_flag_set(N))
         PC = PC + (char) mem[PC];
     else
         PC++;
@@ -128,6 +136,22 @@ INLINE void BRK()
     push(PC+2);
     push(SR);
     PC = mem[0xFFFE] | (mem[0xFFFF] << 8);
+}
+
+INLINE void BVC()
+{
+    if (!is_flag_set(V))
+        PC = PC + (char) mem[PC];
+    else
+        PC++;
+}
+
+INLINE void BVS()
+{
+    if (is_flag_set(V))
+        PC = PC + (char) mem[PC];
+    else
+        PC++;
 }
 
 INLINE void CLC()

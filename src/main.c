@@ -6,7 +6,7 @@
 int main()
 {
     reset();
-    loadROM("rom");
+    load_ROM("rom");
     memoryDump(RAM_OFFSET, 0x30);
 
     run();

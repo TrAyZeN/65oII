@@ -48,9 +48,10 @@ void pull();
 
 void set_flag(byte flag);
 void unset_flag(byte flag);
+byte is_flag_set(byte flag);
 
 void reset();
-void loadROM(const char *filename);
+void load_ROM(const char *filename);
 void run();
 
 #endif
