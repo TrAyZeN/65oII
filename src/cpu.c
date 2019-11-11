@@ -68,6 +68,12 @@ void push(byte b)
     mem[STACK_OFFSET + SP++] = B;
 }
 
+void push_word(word w)
+{
+    push(w & 0xFF);
+    push(w >> 8);
+}
+
 void set_flag(byte flag)
 {
     SR |= flag;

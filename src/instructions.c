@@ -370,6 +370,12 @@ INLINE void JMP()
     }
 }
 
+INLINE void JSR()
+{
+    push_word(PC+2);
+    PC = mem[read_16()];
+}
+
 INLINE void LDA()
 {
     switch (opcode)

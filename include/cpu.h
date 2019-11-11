@@ -44,6 +44,7 @@ byte read_8();
 word read_16();
 
 void push(byte b);
+void push_word(word w);
 void pull();
 
 void set_flag(byte flag);
