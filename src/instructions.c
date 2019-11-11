@@ -269,9 +269,81 @@ INLINE void CPY()
         set_flag(N);
 }
 
+INLINE void DEC()
+{
+    switch (opcode)
+    {
+        case 0xC6:
+        break;
+        case 0xD6:
+        break;
+        case 0xCE:
+        break;
+        case 0xDE:
+        break;
+    }
+}
+
+INLINE void DEX()
+{
+    X--;
+    if (X == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (X <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
 INLINE void DEY()
 {
     Y--;
+    if (Y == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (Y <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void INC()
+{
+    switch (opcode)
+    {
+        case 0xE6:
+        break;
+        case 0xF6:
+        break;
+        case 0xEE:
+        break;
+        case 0xFE:
+        break;
+    }
+}
+
+INLINE void INX()
+{
+    X++;
+    if (X == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (X <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void INY()
+{
+    Y++;
     if (Y == 0x00)
         set_flag(Z);
     else

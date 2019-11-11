@@ -43,7 +43,17 @@ INLINE void CPX();  // Compare Memory and Index X
 
 INLINE void CPY();  // Compare Memory and Index Y
 
+INLINE void DEC();  // Decrement Memory by One
+
+INLINE void DEX();  // Decrement Index X by One
+
 INLINE void DEY();  // Decrement Index Y by One
+
+INLINE void INC();  // Increment Memory by One
+
+INLINE void INX();  // Increment Index X by One
+
+INLINE void INY();  // Increment Index Y by One
 
 INLINE void JMP();  // Jump to New Location
 
