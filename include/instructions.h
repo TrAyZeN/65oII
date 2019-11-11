@@ -29,6 +29,8 @@ INLINE void BRK();  // Force Break
 
 INLINE void BVC();  // Branch on Overflow Clear
 
+INLINE void BVS();  // Branch on Overflow Set
+
 INLINE void CLC();  // Clear Carry Flag
 
 INLINE void CLD();  // Clear Decimal Mode

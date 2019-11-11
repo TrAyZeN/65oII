@@ -13,13 +13,13 @@
 void (* instructions_table[256])() =
 {
 //        00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F
-/* 00 */ BRK, NIP, IOP, IOP, IOP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, IOP, NIP, NIP, IOP,
+/* 00 */ BRK, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PHP, NIP, NIP, IOP, IOP, NIP, NIP, IOP,
 /* 10 */ BPL, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLC, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 20 */ NIP, NIP, IOP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, NIP, NIP, NIP, IOP,
+/* 20 */ JSR, NIP, IOP, IOP, NIP, NIP, NIP, IOP, PLP, NIP, NIP, IOP, NIP, NIP, NIP, IOP,
 /* 30 */ BMI, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEC, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 40 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
+/* 40 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PHA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
 /* 50 */ BVC, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 60 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, NIP, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
+/* 60 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PLA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
 /* 70 */ BVS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
 /* 80 */ IOP, STA, IOP, IOP, STY, STA, STX, IOP, DEY, IOP, NIP, IOP, STY, STA, STX, IOP,
 /* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, NIP, STA, NIP, IOP, IOP, STA, IOP, IOP,
@@ -72,6 +72,11 @@ void push_word(word w)
 {
     push(w & 0xFF);
     push(w >> 8);
+}
+
+byte pull()
+{
+    return mem[STACK_OFFSET + SP--];
 }
 
 void set_flag(byte flag)

@@ -481,6 +481,11 @@ INLINE void LDY()
         set_flag(N);
 }
 
+INLINE void LSR()
+{
+
+}
+
 INLINE void NOP() {}
 
 INLINE void PHA()
@@ -491,6 +496,26 @@ INLINE void PHA()
 INLINE void PHP()
 {
     push(SR);
+}
+
+INLINE void PLA()
+{
+    A = pull();
+
+    if (A == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (A <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void PLP()
+{
+    SR = pull();
 }
 
 INLINE void SEC()
