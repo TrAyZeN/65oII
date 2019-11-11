@@ -53,6 +53,28 @@ unsigned char instructions_cycles[256] =
 /* F0 */   7,   6,   0,   0,   0,   3,   5,   0,   3,   2,   2,   0,   0,   4,   6,   0
 };
 
+enum addressing_mode addrmode_table[256] =
+{
+//         00    01    02    03    04    05    06    07    08    09    0A    0B    0C
+//         0D    0E    0F
+/* 00 */ IMPL, XIND, NONE, NONE, NONE,  ZPG,  ZPG, NONE, IMPL,  IMM,  ACC, NONE, NONE,  ABS,  ABS, NONE,
+/* 10 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE,
+/* 20 */  ABS, XIND, NONE, NONE,  ZPG,  ZPG,  ZPG, NONE, IMPL,  IMM,  ACC, NONE,  ABS,  ABS,  ABS, NONE,
+/* 30 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE,
+/* 40 */ IMPL, XIND, NONE, NONE, NONE,  ZPG,  ZPG, NONE, IMPL,  IMM,  ACC, NONE,  ABS,  ABS,  ABS, NONE,
+/* 50 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE,
+/* 60 */ IMPL, XIND, NONE, NONE, NONE,  ZPG,  ZPG, NONE, IMPL,  IMM,  ACC, NONE,  IND,  ABS,  ABS, NONE,
+/* 70 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE,
+/* 80 */ NONE, XIND, NONE, NONE,  ZPG,  ZPG,  ZPG, NONE, IMPL, NONE, IMPL, NONE,  ABS,  ABS,  ABS, NONE,
+/* 90 */  REL, INDY, NONE, NONE, ZPGX, ZPGX, ZPGY, NONE, IMPL, ABSY, IMPL, NONE, NONE, ABSX, NONE, NONE,
+/* A0 */  IMM, XIND,  IMM, NONE,  ZPG,  ZPG,  ZPG, NONE, IMPL,  IMM, IMPL, NONE,  ABS,  ABS,  ABS, NONE,
+/* B0 */  REL, INDY, NONE, NONE, ZPGX, ZPGX, ZPGY, NONE, IMPL, ABSY, IMPL, NONE, ABSX, ABSX, ABSY, NONE,
+/* C0 */  IMM, XIND, NONE, NONE,  ZPG,  ZPG,  ZPG, NONE, IMPL, ABSY, IMPL, NONE,  ABS,  ABS,  ABS, NONE,
+/* D0 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE,
+/* E0 */  IMM, XIND, NONE, NONE,  ZPG,  ZPG,  ZPG, NONE, IMPL,  IMM, IMPL, NONE,  ABS,  ABS,  ABS, NONE,
+/* F0 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE
+};
+
 byte read_8()
 {
     return mem[PC++];
@@ -92,6 +114,46 @@ void unset_flag(byte flag)
 byte is_flag_set(byte flag)
 {
     return SR & flag;
+}
+
+void read_operand()
+{
+    switch (addrmode_table[opcode])
+    {
+        case  ACC:
+            operand = A;
+        break;
+        case  ABS:
+            operand = mem[read_16()];
+        break;
+        case ABSX:
+            operand = mem[read_16() + X];
+        break;
+        case ABSY:
+            operand = mem[read_16() + Y];
+        break;
+        case  IMM:
+            operand = read_8();
+        break;
+        case  IND:
+            operand = mem[mem[read_16()]];
+        break;
+        case XIND:
+        break;
+        case INDY:
+        break;
+        case  REL:
+        break;
+        case  ZPG:
+            operand = mem[read_8()];
+        break;
+        case ZPGX:
+            operand = mem[read_8() + X];
+        break;
+        case ZPGY:
+            operand = mem[read_8() + Y];
+        break;
+    }
 }
 
 void reset()
@@ -134,6 +196,7 @@ void run()
     for (;;)
     {
         opcode = mem[PC++];
+        read_operand();
         instructions_table[opcode]();
 
         //sleep(1.0 / CLOCK_SPEED);

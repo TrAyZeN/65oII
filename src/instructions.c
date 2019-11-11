@@ -6,60 +6,27 @@
 
 void ADC()
 {
-    switch (opcode)
-    {
-        case 0x69:
-            A += read_8();
-        break;
-        case 0x65:
-            A += mem[read_8()];
-        break;
-        case 0x75:
-            A += mem[read_8() + X];
-        break;
-        case 0x6D:
-            A += mem[read_16()];
-        break;
-        case 0x7D:
-            A += mem[read_16() + X];
-        break;
-        case 0x79:
-            A += mem[read_16() + Y];
-        break;
-        case 0x61:
-        break;
-        case 0x71:
-        break;
-    }
+    if (A + operand > 0xFF)
+        set_flag(C);
+    else
+        unset_flag(C);
+
+    A += operand;
+
+    if (A == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (A <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
 }
 
 INLINE void AND()
 {
-    switch (opcode)
-    {
-        case 0x29:
-            A &= read_8();
-        break;
-        case 0x25:
-            A &= mem[read_8()];
-        break;
-        case 0x35:
-            A &= mem[read_8() + X];
-        break;
-        case 0x2D:
-            A &= mem[read_16()];
-        break;
-        case 0x3D:
-            A &= mem[read_16() + X];
-        break;
-        case 0x39:
-            A &= mem[read_16() + Y];
-        break;
-        case 0x21:
-        break;
-        case 0x31:
-        break;
-    }
+    A &= operand;
 
     if (A == 0x00)
         set_flag(Z);
@@ -74,7 +41,19 @@ INLINE void AND()
 
 INLINE void ASL()
 {
-
+    switch (opcode)
+    {
+        case 0x0A:
+        break;
+        case 0x06:
+        break;
+        case 0x16:
+        break;
+        case 0x0E:
+        break;
+        case 0x1E:
+        break;
+    }
 }
 
 INLINE void BCC()
@@ -178,31 +157,7 @@ INLINE void CLV()
 INLINE void CMP()
 {
     byte r;
-    switch (opcode)
-    {
-        case 0xC9:
-            r = A - read_8();
-        break;
-        case 0xC5:
-            r = A - mem[read_8()];
-        break;
-        case 0xD5:
-            r = A - mem[read_8() + X];
-        break;
-        case 0xCD:
-            r = A - mem[read_16()];
-        break;
-        case 0xDD:
-            r = A - mem[read_16() + X];
-        break;
-        case 0xD9:
-            r = A - mem[read_16() + Y];
-        break;
-        case 0xC1:
-        break;
-        case 0xD1:
-        break;
-    }
+    r = A - operand;
 
     if (r == 0x00)
         set_flag(Z);
@@ -218,18 +173,7 @@ INLINE void CMP()
 INLINE void CPX()
 {
     byte r;
-    switch (opcode)
-    {
-        case 0xE0:
-            r = X - read_8();
-        break;
-        case 0xE4:
-            r = X - mem[read_8()];
-        break;
-        case 0xEC:
-            r = X - mem[read_16()];
-        break;
-    }
+    r = X - operand;
 
     if (r == 0x00)
         set_flag(Z);
@@ -245,18 +189,7 @@ INLINE void CPX()
 INLINE void CPY()
 {
     byte r;
-    switch (opcode)
-    {
-        case 0xC0:
-            r = Y - read_8();
-        break;
-        case 0xC4:
-            r = Y - mem[read_8()];
-        break;
-        case 0xCC:
-            r = Y - mem[read_16()];
-        break;
-    }
+    r = Y - operand;
 
     if (r == 0x00)
         set_flag(Z);
@@ -287,6 +220,7 @@ INLINE void DEC()
 INLINE void DEX()
 {
     X--;
+
     if (X == 0x00)
         set_flag(Z);
     else
@@ -301,6 +235,7 @@ INLINE void DEX()
 INLINE void DEY()
 {
     Y--;
+
     if (Y == 0x00)
         set_flag(Z);
     else
@@ -330,6 +265,7 @@ INLINE void INC()
 INLINE void INX()
 {
     X++;
+
     if (X == 0x00)
         set_flag(Z);
     else
@@ -344,6 +280,7 @@ INLINE void INX()
 INLINE void INY()
 {
     Y++;
+
     if (Y == 0x00)
         set_flag(Z);
     else
@@ -378,33 +315,7 @@ INLINE void JSR()
 
 INLINE void LDA()
 {
-    switch (opcode)
-    {
-        case 0xA9:
-            A = read_8();
-        break;
-        case 0xA5:
-            A = mem[read_8()];
-        break;
-        case 0xB5:
-            A = mem[read_8() + X];
-        break;
-        case 0xAD:
-            A = mem[read_16()];
-        break;
-        case 0xBD:
-            A = mem[read_16() + X];
-        break;
-        case 0xB9:
-            A = mem[read_16() + Y];
-        break;
-        case 0xA1:
-            A = A;
-        break;
-        case 0xB1:
-            A = A;
-        break;
-    }
+    A = operand;
 
     if (A == 0x00)
         set_flag(Z);
@@ -419,24 +330,7 @@ INLINE void LDA()
 
 INLINE void LDX()
 {
-    switch (opcode)
-    {
-        case 0xA2:
-            X = read_8();
-        break;
-        case 0xA6:
-            X = mem[read_8()];
-        break;
-        case 0xB6:
-            X = mem[read_8() + Y];
-        break;
-        case 0xAE:
-            X = mem[read_16()];
-        break;
-        case 0xBE:
-            X = mem[read_16() + Y];
-        break;
-    }
+    X = operand;
 
     if (X == 0x00)
         set_flag(Z);
@@ -451,24 +345,7 @@ INLINE void LDX()
 
 INLINE void LDY()
 {
-    switch (opcode)
-    {
-        case 0xA0:
-            Y = read_8();
-        break;
-        case 0xA4:
-            Y = mem[read_8()];
-        break;
-        case 0xB4:
-            Y = mem[read_8() + X];
-        break;
-        case 0xAC:
-            Y = mem[read_16()];
-        break;
-        case 0xBC:
-            Y = mem[read_16() + X];
-        break;
-    }
+    Y = operand;
 
     if (Y == 0x00)
         set_flag(Z);

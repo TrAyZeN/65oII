@@ -37,6 +37,25 @@ byte SR;            // 8-bit status register [NV-BDIZC]
  */
 byte mem[0x10000];  // 64KB memory
 byte opcode;        // opcode
+byte operand;
+
+enum addressing_mode
+{
+    NONE,
+    ACC,
+    ABS,
+    ABSX,
+    ABSY,
+    IMM,
+    IMPL,
+    IND,
+    XIND,
+    INDY,
+    REL,
+    ZPG,
+    ZPGX,
+    ZPGY
+};
 
 byte counter;
 
@@ -50,6 +69,8 @@ byte pull();
 void set_flag(byte flag);
 void unset_flag(byte flag);
 byte is_flag_set(byte flag);
+
+void read_operand();
 
 void reset();
 void load_ROM(const char *filename);
