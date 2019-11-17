@@ -6,12 +6,12 @@
 
 void ADC()
 {
-    if (A + operand > 0xFF)
+    if (A + C + (*operand) > 0xFF)
         set_flag(C);
     else
         unset_flag(C);
 
-    A += operand;
+    A += (*operand);
 
     if (A == 0x00)
         set_flag(Z);
@@ -26,7 +26,7 @@ void ADC()
 
 INLINE void AND()
 {
-    A &= operand;
+    A &= (*operand);
 
     if (A == 0x00)
         set_flag(Z);
@@ -41,19 +41,22 @@ INLINE void AND()
 
 INLINE void ASL()
 {
-    switch (opcode)
-    {
-        case 0x0A:
-        break;
-        case 0x06:
-        break;
-        case 0x16:
-        break;
-        case 0x0E:
-        break;
-        case 0x1E:
-        break;
-    }
+    if ((*operand) & 0b10000000)
+        set_flag(C);
+    else
+        unset_flag(C);
+
+    *operand <<= 1;
+
+    if ((*operand) == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if ((*operand) <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
 }
 
 INLINE void BCC()
@@ -157,7 +160,7 @@ INLINE void CLV()
 INLINE void CMP()
 {
     byte r;
-    r = A - operand;
+    r = A - (*operand);
 
     if (r == 0x00)
         set_flag(Z);
@@ -173,7 +176,7 @@ INLINE void CMP()
 INLINE void CPX()
 {
     byte r;
-    r = X - operand;
+    r = X - (*operand);
 
     if (r == 0x00)
         set_flag(Z);
@@ -189,7 +192,7 @@ INLINE void CPX()
 INLINE void CPY()
 {
     byte r;
-    r = Y - operand;
+    r = Y - (*operand);
 
     if (r == 0x00)
         set_flag(Z);
@@ -204,17 +207,17 @@ INLINE void CPY()
 
 INLINE void DEC()
 {
-    switch (opcode)
-    {
-        case 0xC6:
-        break;
-        case 0xD6:
-        break;
-        case 0xCE:
-        break;
-        case 0xDE:
-        break;
-    }
+    (*operand)--;
+
+    if (*operand == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (*operand <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
 }
 
 INLINE void DEX()
@@ -247,19 +250,35 @@ INLINE void DEY()
         set_flag(N);
 }
 
+INLINE void EOR()
+{
+    A ^= (*operand);
+
+    if (A == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (A <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+
+}
+
 INLINE void INC()
 {
-    switch (opcode)
-    {
-        case 0xE6:
-        break;
-        case 0xF6:
-        break;
-        case 0xEE:
-        break;
-        case 0xFE:
-        break;
-    }
+    (*operand)++;
+
+    if (*operand == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (*operand <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
 }
 
 INLINE void INX()
@@ -294,28 +313,18 @@ INLINE void INY()
 
 INLINE void JMP()
 {
-    word p;
-    switch (opcode)
-    {
-        case 0x4C:
-            PC = mem[read_16()];
-        break;
-        case 0x6C:
-            p = read_16();
-            PC = mem[mem[p] | (mem[p+1] << 8)];
-        break;
-    }
+    PC = (*operand);
 }
 
 INLINE void JSR()
 {
     push_word(PC+2);
-    PC = mem[read_16()];
+    PC = (*operand);
 }
 
 INLINE void LDA()
 {
-    A = operand;
+    A = (*operand);
 
     if (A == 0x00)
         set_flag(Z);
@@ -330,7 +339,7 @@ INLINE void LDA()
 
 INLINE void LDX()
 {
-    X = operand;
+    X = (*operand);
 
     if (X == 0x00)
         set_flag(Z);
@@ -345,7 +354,7 @@ INLINE void LDX()
 
 INLINE void LDY()
 {
-    Y = operand;
+    Y = (*operand);
 
     if (Y == 0x00)
         set_flag(Z);
@@ -360,10 +369,42 @@ INLINE void LDY()
 
 INLINE void LSR()
 {
+    if ((*operand) & 0b00000001)
+        set_flag(C);
+    else
+        unset_flag(C);
+
+    *operand >>= 1;
+
+    if ((*operand) == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if ((*operand) <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
 
 }
 
 INLINE void NOP() {}
+
+INLINE void ORA()
+{
+    A |= (*operand);
+
+    if (A == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (A <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+
+}
 
 INLINE void PHA()
 {
@@ -412,60 +453,97 @@ INLINE void SEI()
 
 INLINE void STA()
 {
-    switch (opcode)
-    {
-        case 0x85:
-            mem[read_8()] = A;
-        break;
-        case 0x95:
-            mem[read_8() + X] = A;
-        break;
-        case 0x8D:
-            mem[read_16()] = A;
-        break;
-        case 0x9D:
-            mem[read_16() + X] = A;
-        break;
-        case 0x99:
-            mem[read_16() + Y] = A;
-        break;
-        case 0x81:
-        break;
-        case 0x91:
-        break;
-    }
+    *operand = A;
 }
 
 INLINE void STX()
 {
-    switch (opcode)
-    {
-        case 0x86:
-            mem[PC++] = X;
-        break;
-        case 0x96:
-            mem[read_16() + Y] = X;
-        break;
-        case 0x8E:
-            mem[read_16()] = X;
-        break;
-    }
+    *operand = X;
 }
 
 INLINE void STY()
 {
-    switch (opcode)
-    {
-        case 0x84:
-            mem[PC++] = Y;
-        break;
-        case 0x94:
-            mem[read_16() + X] = Y;
-        break;
-        case 0x8C:
-            mem[read_16()] = Y;
-        break;
-    }
+    *operand = Y;
+}
+
+INLINE void TAX()
+{
+    X = A;
+
+    if (X == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (X <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void TAY()
+{
+    Y = A;
+
+    if (Y == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (Y <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void TSX()
+{
+    X = SP;
+
+    if (X == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (X <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void TXA()
+{
+    A = X;
+
+    if (A == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (A <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
+}
+
+INLINE void TXS()
+{
+    SP = X;
+}
+
+INLINE void TYA()
+{
+    A = Y;
+
+    if (A == 0x00)
+        set_flag(Z);
+    else
+        unset_flag(Z);
+
+    if (A <= 0x7F)
+        unset_flag(N);
+    else
+        set_flag(N);
 }
 
 void NIP()

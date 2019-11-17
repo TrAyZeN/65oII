@@ -13,18 +13,18 @@
 void (* instructions_table[256])() =
 {
 //        00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F
-/* 00 */ BRK, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PHP, NIP, NIP, IOP, IOP, NIP, NIP, IOP,
-/* 10 */ BPL, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLC, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 20 */ JSR, NIP, IOP, IOP, NIP, NIP, NIP, IOP, PLP, NIP, NIP, IOP, NIP, NIP, NIP, IOP,
-/* 30 */ BMI, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEC, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 40 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PHA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
-/* 50 */ BVC, NIP, IOP, IOP, IOP, NIP, NIP, IOP, CLI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
+/* 00 */ BRK, ORA, IOP, IOP, IOP, ORA, ASL, IOP, PHP, ORA, ASL, IOP, IOP, ORA, ASL, IOP,
+/* 10 */ BPL, ORA, IOP, IOP, IOP, ORA, ASL, IOP, CLC, ORA, IOP, IOP, IOP, ORA, ASL, IOP,
+/* 20 */ JSR, AND, IOP, IOP, NIP, AND, NIP, IOP, PLP, AND, NIP, IOP, NIP, AND, NIP, IOP,
+/* 30 */ BMI, AND, IOP, IOP, IOP, AND, NIP, IOP, SEC, AND, IOP, IOP, IOP, AND, NIP, IOP,
+/* 40 */ NIP, EOR, IOP, IOP, IOP, EOR, NIP, IOP, PHA, EOR, NIP, IOP, JMP, EOR, NIP, IOP,
+/* 50 */ BVC, EOR, IOP, IOP, IOP, EOR, NIP, IOP, CLI, EOR, IOP, IOP, IOP, EOR, NIP, IOP,
 /* 60 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PLA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
 /* 70 */ BVS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 80 */ IOP, STA, IOP, IOP, STY, STA, STX, IOP, DEY, IOP, NIP, IOP, STY, STA, STX, IOP,
-/* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, NIP, STA, NIP, IOP, IOP, STA, IOP, IOP,
-/* A0 */ LDY, LDA, LDX, IOP, LDY, LDA, LDX, IOP, NIP, LDA, NIP, IOP, LDY, LDA, LDX, IOP,
-/* B0 */ BCS, LDA, IOP, IOP, LDY, LDA, LDX, IOP, NIP, LDA, NIP, IOP, LDY, LDA, LDX, IOP,
+/* 80 */ IOP, STA, IOP, IOP, STY, STA, STX, IOP, DEY, IOP, TXA, IOP, STY, STA, STX, IOP,
+/* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, TYA, STA, TXS, IOP, IOP, STA, IOP, IOP,
+/* A0 */ LDY, LDA, LDX, IOP, LDY, LDA, LDX, IOP, TAY, LDA, TAX, IOP, LDY, LDA, LDX, IOP,
+/* B0 */ BCS, LDA, IOP, IOP, LDY, LDA, LDX, IOP, NIP, LDA, TSX, IOP, LDY, LDA, LDX, IOP,
 /* C0 */ CPY, CMP, IOP, IOP, CPY, CMP, DEC, IOP, INY, CMP, DEX, IOP, CPY, CMP, DEC, IOP,
 /* D0 */ BNE, CMP, IOP, IOP, IOP, CMP, DEC, IOP, CLD, CMP, IOP, IOP, IOP, CMP, DEC, IOP,
 /* E0 */ CPX, NIP, IOP, IOP, CPX, NIP, INC, IOP, INX, NIP, NOP, IOP, CPX, NIP, INC, IOP,
@@ -116,28 +116,22 @@ byte is_flag_set(byte flag)
     return SR & flag;
 }
 
-void read_operand()
+byte *read_operand()
 {
     switch (addrmode_table[opcode])
     {
         case  ACC:
-            operand = A;
-        break;
+            return &A;
         case  ABS:
-            operand = mem[read_16()];
-        break;
+            return &mem[read_16()];
         case ABSX:
-            operand = mem[read_16() + X];
-        break;
+            return &mem[read_16() + X];
         case ABSY:
-            operand = mem[read_16() + Y];
-        break;
+            return &mem[read_16() + Y];
         case  IMM:
-            operand = read_8();
-        break;
+            return &mem[PC++];
         case  IND:
-            operand = mem[mem[read_16()]];
-        break;
+            return &mem[mem[read_16()]];
         case XIND:
         break;
         case INDY:
@@ -145,14 +139,11 @@ void read_operand()
         case  REL:
         break;
         case  ZPG:
-            operand = mem[read_8()];
-        break;
+            return &mem[read_8()];
         case ZPGX:
-            operand = mem[read_8() + X];
-        break;
+            return &mem[read_8() + X];
         case ZPGY:
-            operand = mem[read_8() + Y];
-        break;
+           return &mem[read_8() + Y];
     }
 }
 
@@ -196,7 +187,7 @@ void run()
     for (;;)
     {
         opcode = mem[PC++];
-        read_operand();
+        operand = read_operand();
         instructions_table[opcode]();
 
         //sleep(1.0 / CLOCK_SPEED);

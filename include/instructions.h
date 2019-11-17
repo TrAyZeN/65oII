@@ -11,6 +11,8 @@ INLINE void ADC();  // Add Memory to Accumulator with Carry
 
 INLINE void AND();  // AND Memory with Accumulator
 
+INLINE void ASL();  // Shift Left One Bit (Memory or Accumulator)
+
 INLINE void BCC();  // Branch on Carry Clear
 
 INLINE void BCS();  // Branch on Carry Set
@@ -51,6 +53,8 @@ INLINE void DEX();  // Decrement Index X by One
 
 INLINE void DEY();  // Decrement Index Y by One
 
+INLINE void EOR();  // Exclusive-OR Memory with Accumulator
+
 INLINE void INC();  // Increment Memory by One
 
 INLINE void INX();  // Increment Index X by One
@@ -68,6 +72,8 @@ INLINE void LDX();  // Load Index X with Memory
 INLINE void LDY();  // Load Index Y with Memory
 
 INLINE void NOP();  // No Operation
+
+INLINE void ORA();  // OR Memory with Accumulator
 
 INLINE void PHA();  // Push Accumulator on Stack
 
@@ -88,6 +94,18 @@ INLINE void STA();  // Store Accumulator in Memory
 INLINE void STX();  // Store Index X in Memory
 
 INLINE void STY();  // Store Index Y in Memory
+
+INLINE void TAX();  // Transfer Accumulator to Index X
+
+INLINE void TAY();  // Transfer Accumulator to Index Y
+
+INLINE void TSX();  // Transfer Stack Pointer to Index X
+
+INLINE void TXA();  // Transfer Index X to Accumulator
+
+INLINE void TXS();  // Transfer Index X to Stack Register
+
+INLINE void TYA();  // Transfer Index Y to Accumulator
 
 void NIP();         // Not Implemented
 
