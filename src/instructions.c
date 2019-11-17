@@ -13,30 +13,16 @@ void ADC()
 
     A += (*operand);
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void AND()
 {
     A &= (*operand);
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void ASL()
@@ -48,15 +34,8 @@ INLINE void ASL()
 
     *operand <<= 1;
 
-    if ((*operand) == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if ((*operand) <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag((*operand) == 0x00, Z);
+    update_flag((*operand) <= 0x7F, N);
 }
 
 INLINE void BCC()
@@ -162,15 +141,8 @@ INLINE void CMP()
     byte r;
     r = A - (*operand);
 
-    if (r == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (r <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(r == 0x00, Z);
+    update_flag(r <= 0x7F, N);
 }
 
 INLINE void CPX()
@@ -178,15 +150,8 @@ INLINE void CPX()
     byte r;
     r = X - (*operand);
 
-    if (r == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (r <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(r == 0x00, Z);
+    update_flag(r <= 0x7F, N);
 }
 
 INLINE void CPY()
@@ -194,121 +159,64 @@ INLINE void CPY()
     byte r;
     r = Y - (*operand);
 
-    if (r == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (r <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(r == 0x00, Z);
+    update_flag(r <= 0x7F, N);
 }
 
 INLINE void DEC()
 {
     (*operand)--;
 
-    if (*operand == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (*operand <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag((*operand) == 0x00, Z);
+    update_flag((*operand) <= 0x7F, N);
 }
 
 INLINE void DEX()
 {
     X--;
 
-    if (X == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (X <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(X == 0x00, Z);
+    update_flag(X <= 0x7F, N);
 }
 
 INLINE void DEY()
 {
     Y--;
 
-    if (Y == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (Y <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(Y == 0x00, Z);
+    update_flag(Y <= 0x7F, N);
 }
 
 INLINE void EOR()
 {
     A ^= (*operand);
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
-
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void INC()
 {
     (*operand)++;
 
-    if (*operand == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (*operand <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag((*operand) == 0x00, Z);
+    update_flag((*operand) <= 0x7F, N);
 }
 
 INLINE void INX()
 {
     X++;
 
-    if (X == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (X <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(X == 0x00, Z);
+    update_flag(X <= 0x7F, N);
 }
 
 INLINE void INY()
 {
     Y++;
 
-    if (Y == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (Y <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(Y == 0x00, Z);
+    update_flag(Y <= 0x7F, N);
 }
 
 INLINE void JMP()
@@ -326,66 +234,34 @@ INLINE void LDA()
 {
     A = (*operand);
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void LDX()
 {
     X = (*operand);
 
-    if (X == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (X <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(X == 0x00, Z);
+    update_flag(X <= 0x7F, N);
 }
 
 INLINE void LDY()
 {
     Y = (*operand);
 
-    if (Y == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (Y <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(Y == 0x00, Z);
+    update_flag(Y <= 0x7F, N);
 }
 
 INLINE void LSR()
 {
-    if ((*operand) & 0b00000001)
-        set_flag(C);
-    else
-        unset_flag(C);
+    update_flag((*operand) & 0b00000001, C);
 
     *operand >>= 1;
 
-    if ((*operand) == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if ((*operand) <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
-
+    update_flag((*operand) == 0x00, Z);
+    update_flag((*operand) <= 0x7F, N);
 }
 
 INLINE void NOP() {}
@@ -394,16 +270,8 @@ INLINE void ORA()
 {
     A |= (*operand);
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
-
+    update_flag(A == 0x00, Z);
+    udpate_flag(A <= 0x7F, N);
 }
 
 INLINE void PHA()
@@ -420,15 +288,8 @@ INLINE void PLA()
 {
     A = pull();
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void PLP()
@@ -470,60 +331,32 @@ INLINE void TAX()
 {
     X = A;
 
-    if (X == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (X <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(X == 0x00, Z);
+    update_flag(X <= 0x7F, N);
 }
 
 INLINE void TAY()
 {
     Y = A;
 
-    if (Y == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (Y <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(Y == 0x00, Z);
+    update_flag(Y <= 0x7F, N);
 }
 
 INLINE void TSX()
 {
     X = SP;
 
-    if (X == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (X <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(X == 0x00, Z);
+    update_flag(X <= 0x7F, N);
 }
 
 INLINE void TXA()
 {
     A = X;
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void TXS()
@@ -535,15 +368,8 @@ INLINE void TYA()
 {
     A = Y;
 
-    if (A == 0x00)
-        set_flag(Z);
-    else
-        unset_flag(Z);
-
-    if (A <= 0x7F)
-        unset_flag(N);
-    else
-        set_flag(N);
+    update_flag(A == 0x00, Z);
+    update_flag(A <= 0x7F, N);
 }
 
 void NIP()

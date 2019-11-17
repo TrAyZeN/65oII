@@ -111,6 +111,14 @@ void unset_flag(byte flag)
     SR &= 0xFF - flag;
 }
 
+void update_flag(byte val, byte flag)
+{
+    if (val)
+        SR |= flag;
+    else
+        SR &= ~flag;
+}
+
 byte is_flag_set(byte flag)
 {
     return SR & flag;

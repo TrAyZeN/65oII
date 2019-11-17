@@ -68,6 +68,7 @@ byte pull();
 
 void set_flag(byte flag);
 void unset_flag(byte flag);
+void update_flag(byte val, byte flag);
 byte is_flag_set(byte flag);
 
 byte *read_operand();
