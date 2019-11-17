@@ -4,12 +4,9 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-void ADC()
+INLINE void ADC()
 {
-    if (A + C + (*operand) > 0xFF)
-        set_flag(C);
-    else
-        unset_flag(C);
+    update_flag((A + C + (*operand)) > 0xFF, C);
 
     A += (*operand);
 
@@ -27,10 +24,7 @@ INLINE void AND()
 
 INLINE void ASL()
 {
-    if ((*operand) & 0b10000000)
-        set_flag(C);
-    else
-        unset_flag(C);
+    update_flag((*operand) & 0b10000000, C);
 
     *operand <<= 1;
 
@@ -41,25 +35,19 @@ INLINE void ASL()
 INLINE void BCC()
 {
     if (!is_flag_set(C))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BCS()
 {
     if (is_flag_set(C))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BEQ()
 {
     if (is_flag_set(Z))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BIT()
@@ -70,30 +58,24 @@ INLINE void BIT()
 INLINE void BMI()
 {
     if (is_flag_set(N))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BNE()
 {
     if (!is_flag_set(Z))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BPL()
 {
     if (!is_flag_set(N))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BRK()
 {
-    set_flag(I);
+    update_flag(1, I);
     push(PC+2);
     push(SR);
     PC = mem[0xFFFE] | (mem[0xFFFF] << 8);
@@ -102,37 +84,33 @@ INLINE void BRK()
 INLINE void BVC()
 {
     if (!is_flag_set(V))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void BVS()
 {
     if (is_flag_set(V))
-        PC = PC + (char) mem[PC];
-    else
-        PC++;
+        PC = PC + (char) (*operand);
 }
 
 INLINE void CLC()
 {
-    unset_flag(C);
+    update_flag(0, C);
 }
 
 INLINE void CLD()
 {
-    unset_flag(D);
+    update_flag(0, D);
 }
 
 INLINE void CLI()
 {
-    unset_flag(I);
+    update_flag(0, I);
 }
 
 INLINE void CLV()
 {
-    unset_flag(V);
+    update_flag(0, V);
 }
 
 // TODO: carry flag
@@ -271,7 +249,7 @@ INLINE void ORA()
     A |= (*operand);
 
     update_flag(A == 0x00, Z);
-    udpate_flag(A <= 0x7F, N);
+    update_flag(A <= 0x7F, N);
 }
 
 INLINE void PHA()
@@ -297,19 +275,36 @@ INLINE void PLP()
     SR = pull();
 }
 
+INLINE void RTI()
+{
+    SR = pull();
+    PC = pull();
+}
+
+INLINE void RTS()
+{
+    PC = pull();
+    PC++;
+}
+
+INLINE void SBC()
+{
+
+}
+
 INLINE void SEC()
 {
-    set_flag(C);
+    update_flag(1, C);
 }
 
 INLINE void SED()
 {
-    set_flag(D);
+    update_flag(1, D);
 }
 
 INLINE void SEI()
 {
-    set_flag(I);
+    update_flag(1, I);
 }
 
 INLINE void STA()

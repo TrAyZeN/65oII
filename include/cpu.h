@@ -37,7 +37,7 @@ byte SR;            // 8-bit status register [NV-BDIZC]
  */
 byte mem[0x10000];  // 64KB memory
 byte opcode;        // opcode
-byte *operand;
+word *operand;
 
 enum addressing_mode
 {
@@ -66,12 +66,10 @@ void push(byte b);
 void push_word(word w);
 byte pull();
 
-void set_flag(byte flag);
-void unset_flag(byte flag);
 void update_flag(byte val, byte flag);
 byte is_flag_set(byte flag);
 
-byte *read_operand();
+word *read_operand();
 
 void reset();
 void load_ROM(const char *filename);

@@ -17,9 +17,9 @@ void (* instructions_table[256])() =
 /* 10 */ BPL, ORA, IOP, IOP, IOP, ORA, ASL, IOP, CLC, ORA, IOP, IOP, IOP, ORA, ASL, IOP,
 /* 20 */ JSR, AND, IOP, IOP, NIP, AND, NIP, IOP, PLP, AND, NIP, IOP, NIP, AND, NIP, IOP,
 /* 30 */ BMI, AND, IOP, IOP, IOP, AND, NIP, IOP, SEC, AND, IOP, IOP, IOP, AND, NIP, IOP,
-/* 40 */ NIP, EOR, IOP, IOP, IOP, EOR, NIP, IOP, PHA, EOR, NIP, IOP, JMP, EOR, NIP, IOP,
+/* 40 */ RTI, EOR, IOP, IOP, IOP, EOR, NIP, IOP, PHA, EOR, NIP, IOP, JMP, EOR, NIP, IOP,
 /* 50 */ BVC, EOR, IOP, IOP, IOP, EOR, NIP, IOP, CLI, EOR, IOP, IOP, IOP, EOR, NIP, IOP,
-/* 60 */ NIP, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PLA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
+/* 60 */ RTS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PLA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
 /* 70 */ BVS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
 /* 80 */ IOP, STA, IOP, IOP, STY, STA, STX, IOP, DEY, IOP, TXA, IOP, STY, STA, STX, IOP,
 /* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, TYA, STA, TXS, IOP, IOP, STA, IOP, IOP,
@@ -101,16 +101,6 @@ byte pull()
     return mem[STACK_OFFSET + SP--];
 }
 
-void set_flag(byte flag)
-{
-    SR |= flag;
-}
-
-void unset_flag(byte flag)
-{
-    SR &= 0xFF - flag;
-}
-
 void update_flag(byte val, byte flag)
 {
     if (val)
@@ -124,34 +114,34 @@ byte is_flag_set(byte flag)
     return SR & flag;
 }
 
-byte *read_operand()
+word *read_operand()
 {
     switch (addrmode_table[opcode])
     {
         case  ACC:
-            return &A;
+            return (word *) &A;
         case  ABS:
-            return &mem[read_16()];
+            return (word *) &mem[read_16()];
         case ABSX:
-            return &mem[read_16() + X];
+            return (word *) &mem[read_16() + X];
         case ABSY:
-            return &mem[read_16() + Y];
+            return (word *) &mem[read_16() + Y];
         case  IMM:
-            return &mem[PC++];
+            return (word *) &mem[PC++];
         case  IND:
-            return &mem[mem[read_16()]];
+            return (word *) &mem[mem[read_16()]];
         case XIND:
-        break;
+            return (word *) &mem[mem[read_8() + X]];
         case INDY:
-        break;
+            return (word *) &mem[mem[read_8()] + Y];
         case  REL:
-        break;
+            return (word *) &mem[PC++];
         case  ZPG:
-            return &mem[read_8()];
+            return (word *) &mem[read_8()];
         case ZPGX:
-            return &mem[read_8() + X];
+            return (word *) &mem[read_8() + X];
         case ZPGY:
-           return &mem[read_8() + Y];
+            return (word *) &mem[read_8() + Y];
     }
 }
 

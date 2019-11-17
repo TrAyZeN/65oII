@@ -83,6 +83,10 @@ INLINE void PLA();  // Pull Accumulator from Stack
 
 INLINE void PLP();  // Pull Processor Status from Stack
 
+INLINE void RTI();  // Return from Interrupt
+
+INLINE void RTS();  // Return from Subroutine
+
 INLINE void SEC();  // Set Carry Flag
 
 INLINE void SED();  // Set Decimal Flag
