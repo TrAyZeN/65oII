@@ -6,30 +6,42 @@
 
 INLINE void ADC()
 {
-    update_flag((A + C + (*operand)) > 0xFF, C);
+    int i;
+    byte a, b, cin, cout;
+    cin = is_flag_set(C);
 
-    A += (*operand);
+    for (i = 0; i < 8; i++)
+    {
+        a = A >> i;
+        b = (*operand) >> i;
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+        cout = a & b | b & cin | a & cin;
+        A |= (cin ^ (a ^ b)) << i;
+
+        cin = cout;
+    }
+
+    update_flag(cout, C);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void AND()
 {
     A &= (*operand);
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void ASL()
 {
-    update_flag((*operand) & 0b10000000, C);
+    update_flag((*operand) >> 7, C);
 
     *operand <<= 1;
 
-    update_flag((*operand) == 0x00, Z);
-    update_flag((*operand) <= 0x7F, N);
+    update_flag(!(*operand), Z);
+    update_flag((*operand) >> 7, N);
 }
 
 INLINE void BCC()
@@ -52,7 +64,9 @@ INLINE void BEQ()
 
 INLINE void BIT()
 {
-
+    update_flag((*operand) & 0b10000000, N);
+    update_flag((*operand) & 0b01000000, V);
+    update_flag(((*operand) & A) == 0x00, Z);
 }
 
 INLINE void BMI()
@@ -119,8 +133,8 @@ INLINE void CMP()
     byte r;
     r = A - (*operand);
 
-    update_flag(r == 0x00, Z);
-    update_flag(r <= 0x7F, N);
+    update_flag(!r, Z);
+    update_flag(r >> 7, N);
 }
 
 INLINE void CPX()
@@ -128,8 +142,8 @@ INLINE void CPX()
     byte r;
     r = X - (*operand);
 
-    update_flag(r == 0x00, Z);
-    update_flag(r <= 0x7F, N);
+    update_flag(!r, Z);
+    update_flag(r >> 7, N);
 }
 
 INLINE void CPY()
@@ -137,64 +151,64 @@ INLINE void CPY()
     byte r;
     r = Y - (*operand);
 
-    update_flag(r == 0x00, Z);
-    update_flag(r <= 0x7F, N);
+    update_flag(!r, Z);
+    update_flag(r >> 7, N);
 }
 
 INLINE void DEC()
 {
     (*operand)--;
 
-    update_flag((*operand) == 0x00, Z);
-    update_flag((*operand) <= 0x7F, N);
+    update_flag(!(*operand), Z);
+    update_flag((*operand) >> 7, N);
 }
 
 INLINE void DEX()
 {
     X--;
 
-    update_flag(X == 0x00, Z);
-    update_flag(X <= 0x7F, N);
+    update_flag(!X, Z);
+    update_flag(X >> 7, N);
 }
 
 INLINE void DEY()
 {
     Y--;
 
-    update_flag(Y == 0x00, Z);
-    update_flag(Y <= 0x7F, N);
+    update_flag(!Y, Z);
+    update_flag(Y >> 7, N);
 }
 
 INLINE void EOR()
 {
     A ^= (*operand);
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void INC()
 {
     (*operand)++;
 
-    update_flag((*operand) == 0x00, Z);
-    update_flag((*operand) <= 0x7F, N);
+    update_flag(!(*operand), Z);
+    update_flag((*operand) >> 7, N);
 }
 
 INLINE void INX()
 {
     X++;
 
-    update_flag(X == 0x00, Z);
-    update_flag(X <= 0x7F, N);
+    update_flag(!X, Z);
+    update_flag(X >> 7, N);
 }
 
 INLINE void INY()
 {
     Y++;
 
-    update_flag(Y == 0x00, Z);
-    update_flag(Y <= 0x7F, N);
+    update_flag(!Y, Z);
+    update_flag(Y >> 7, N);
 }
 
 INLINE void JMP()
@@ -212,24 +226,24 @@ INLINE void LDA()
 {
     A = (*operand);
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void LDX()
 {
     X = (*operand);
 
-    update_flag(X == 0x00, Z);
-    update_flag(X <= 0x7F, N);
+    update_flag(!X, Z);
+    update_flag(X >> 7, N);
 }
 
 INLINE void LDY()
 {
     Y = (*operand);
 
-    update_flag(Y == 0x00, Z);
-    update_flag(Y <= 0x7F, N);
+    update_flag(!Y, Z);
+    update_flag(Y >> 7, N);
 }
 
 INLINE void LSR()
@@ -238,8 +252,8 @@ INLINE void LSR()
 
     *operand >>= 1;
 
-    update_flag((*operand) == 0x00, Z);
-    update_flag((*operand) <= 0x7F, N);
+    update_flag(!(*operand), Z);
+    update_flag((*operand) >> 7, N);
 }
 
 INLINE void NOP() {}
@@ -248,8 +262,8 @@ INLINE void ORA()
 {
     A |= (*operand);
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void PHA()
@@ -266,8 +280,8 @@ INLINE void PLA()
 {
     A = pull();
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void PLP()
@@ -289,7 +303,24 @@ INLINE void RTS()
 
 INLINE void SBC()
 {
+    int i;
+    byte a, b, bin, bout;
+    bin = is_flag_set(C);
 
+    for (i = 0; i < 8; i++)
+    {
+        a = A >> i;
+        b = (*operand) >> i;
+
+        bout = ~a & bin | ~a & b | b & bin;
+        A |= ((a ^ b) ^ bin) << i;
+
+        bin = bout;
+    }
+
+    update_flag(bout, C);
+    update_flag(!(*operand), Z);
+    update_flag(*operand >> 7, N);
 }
 
 INLINE void SEC()
@@ -326,32 +357,32 @@ INLINE void TAX()
 {
     X = A;
 
-    update_flag(X == 0x00, Z);
-    update_flag(X <= 0x7F, N);
+    update_flag(!X, Z);
+    update_flag(X >> 7, N);
 }
 
 INLINE void TAY()
 {
     Y = A;
 
-    update_flag(Y == 0x00, Z);
-    update_flag(Y <= 0x7F, N);
+    update_flag(!Y, Z);
+    update_flag(Y >> 7, N);
 }
 
 INLINE void TSX()
 {
     X = SP;
 
-    update_flag(X == 0x00, Z);
-    update_flag(X <= 0x7F, N);
+    update_flag(!X, Z);
+    update_flag(X >> 7, N);
 }
 
 INLINE void TXA()
 {
     A = X;
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 INLINE void TXS()
@@ -363,8 +394,8 @@ INLINE void TYA()
 {
     A = Y;
 
-    update_flag(A == 0x00, Z);
-    update_flag(A <= 0x7F, N);
+    update_flag(!A, Z);
+    update_flag(A >> 7, N);
 }
 
 void NIP()

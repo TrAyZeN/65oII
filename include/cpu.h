@@ -4,12 +4,9 @@
 typedef unsigned char byte;
 typedef unsigned short word;
 
-#ifndef DEF_CONSTS_
-#define DEF_CONSTS_
-static const unsigned int CLOCK_SPEED  = 1000000;  // 1 MHz clock speed
-static const word STACK_OFFSET = 0x0100;
-static const word RAM_OFFSET   = 0x0200;
-#endif
+#define CLOCK_SPEED  1000000  // 1 MHz clock speed
+#define STACK_OFFSET 0x0100
+#define RAM_OFFSET   0x0200
 
 byte A;             // 8-bit accumulator register
 byte X, Y;          // 8-bit index registers
@@ -37,7 +34,7 @@ byte SR;            // 8-bit status register [NV-BDIZC]
  */
 byte mem[0x10000];  // 64KB memory
 byte opcode;        // opcode
-word *operand;
+byte *operand;
 
 enum addressing_mode
 {
@@ -69,7 +66,7 @@ byte pull();
 void update_flag(byte val, byte flag);
 byte is_flag_set(byte flag);
 
-word *read_operand();
+byte *read_operand();
 
 void reset();
 void load_ROM(const char *filename);

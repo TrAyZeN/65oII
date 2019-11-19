@@ -71,6 +71,8 @@ INLINE void LDX();  // Load Index X with Memory
 
 INLINE void LDY();  // Load Index Y with Memory
 
+INLINE void LSR();  // Shift One Bit Right (Memory or Accumulator)
+
 INLINE void NOP();  // No Operation
 
 INLINE void ORA();  // OR Memory with Accumulator
@@ -86,6 +88,8 @@ INLINE void PLP();  // Pull Processor Status from Stack
 INLINE void RTI();  // Return from Interrupt
 
 INLINE void RTS();  // Return from Subroutine
+
+INLINE void SBC();  // Substract Memory from Accumulator with Borrow
 
 INLINE void SEC();  // Set Carry Flag
 
