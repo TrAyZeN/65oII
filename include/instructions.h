@@ -1,11 +1,16 @@
 #ifndef INSTRUCTIONS_H_
 #define INSTRUCTIONS_H_
+#include "cpu.h"
 
 #ifdef __C99__
 #define INLINE inline
 #else
 #define INLINE __inline
 #endif
+
+void (* instructions_table[256])();
+unsigned char cycles_table[256];
+enum addressing_mode addrmode_table[256];
 
 INLINE void ADC();  // Add Memory to Accumulator with Carry
 
