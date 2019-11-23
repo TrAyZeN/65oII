@@ -10,16 +10,30 @@ INLINE void ADC()
     byte a, b, cin, cout;
     cin = is_flag_set(C);
 
-    for (i = 0; i < 8; i++)
-    {
-        a = A >> i;
-        b = (*operand) >> i;
+    if (is_flag_set(D))
+        for (i = 0; i < 2; i++)
+        {
+            a = (A & 0xF << i*4) >> i*4;
+            b = ((*operand) & 0xF << i*4) >> i*4;
 
-        cout = a & b | b & cin | a & cin;
-        A |= (cin ^ (a ^ b)) << i;
+            byte r = a + b + cin + 6;   // simple addition and + 6 to convert back to BCD
+            cout = r & 0x10;
 
-        cin = cout;
-    }
+            A = (A | 0xF << i*4) & (r & 0xF) << i*4;
+
+            cin = cout;
+        }
+    else
+        for (i = 0; i < 8; i++)
+        {
+            a = A >> i;
+            b = (*operand) >> i;
+
+            cout = a & b | b & cin | a & cin;
+            A |= (cin ^ (a ^ b)) << i;
+
+            cin = cout;
+        }
 
     update_flag(cout, C);
     update_flag(!A, Z);
@@ -297,7 +311,7 @@ INLINE void RTI()
 
 INLINE void RTS()
 {
-    PC = pull();
+    PC = pull() | pull() << 4;
     PC++;
 }
 
