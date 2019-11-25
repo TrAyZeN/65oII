@@ -1,20 +1,37 @@
-CC=gcc
-CFLAGS=-I./include/
-LDFLAGS=
-EXEC=emulator
-DASM=65oII_disassembler
+CFLAGS := -Wall -Wextra -I ./include/
 
-all: $(EXEC) $(DASM)
+BUILDDIR := build
+OBJDIR := $(BUILDDIR)/obj
+BINDIR := $(BUILDDIR)/bin
 
-$(EXEC): mrproper
-	$(CC) src/*.c -o $(EXEC) $(CFLAGS) $(LDFLAGS)
+EMU_SRCS := src/cpu.c \
+			src/instructions.c \
+			src/main.c \
+			src/table.c \
+			src/utils.c
 
-$(DASM):
-	$(CC) disassembler/disassembler.c -o $(DASM) -I./disassembler/
+EMU_OBJS := $(EMU_SRCS:%.c=$(OBJDIR)/%.o)
 
+.PHONY: all
+all: $(BINDIR)/emulator $(BINDIR)/disassembler
+
+$(BINDIR)/emulator: $(EMU_OBJS)
+	@mkdir -p $(@D)
+	$(CC) $(LDFLAGS) $(EMU_OBJS) -o $@
+
+$(BINDIR)/disassembler:
+	@mkdir -p $(@D)
+	$(CC) disassembler/disassembler.c -o $@ -I./disassembler/
+
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PHONY: clean
 clean:
-	rm -f *.o core
+	rm -rf $(OBJDIR)
 
-mrproper: clean
-	rm -f $(EXEC) $(DASM)
+.PHONY: mrproper
+mrproper:
+	rm -rf $(BUILDDIR)
 
