@@ -9,8 +9,8 @@
 #endif
 
 void (* instructions_table[256])();
-unsigned char cycles_table[256];
-enum addressing_mode addrmode_table[256];
+extern const unsigned char cycles_table[256];
+extern const enum addressing_mode addrmode_table[256];
 
 void ADC();  // Add Memory to Accumulator with Carry
 
