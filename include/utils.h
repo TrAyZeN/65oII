@@ -1,7 +1,10 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-void memoryDump(int start, int length);
+#include "cpu.h"    // include byte type
+
+byte full_adder(byte a, byte b, byte *c);
+byte BCD_adder(byte a, byte b, byte *c);
 
 #endif
 

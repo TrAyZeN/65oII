@@ -8,7 +8,8 @@ EMU_SRCS := src/cpu.c \
 			src/instructions.c \
 			src/main.c \
 			src/table.c \
-			src/utils.c
+			src/utils.c \
+			src/debug.c
 
 EMU_OBJS := $(EMU_SRCS:%.c=$(OBJDIR)/%.o)
 

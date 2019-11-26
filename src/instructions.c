@@ -1,6 +1,7 @@
 #include "instructions.h"
 #include "cpu.h"
 
+#include "utils.h"
 #include "stdlib.h"
 #include "stdio.h"
 
@@ -24,18 +25,9 @@ void ADC()
             cin = cout;
         }
     else
-        for (i = 0; i < 8; i++)
-        {
-            a = A >> i;
-            b = (*operand) >> i;
+        A = full_adder(A, (*operand), &cin);
 
-            cout = a & b | b & cin | a & cin;
-            A |= (cin ^ (a ^ b)) << i;
-
-            cin = cout;
-        }
-
-    update_flag(cout, C);
+    update_flag(cin, C);
     update_flag(!A, Z);
     update_flag(A >> 7, N);
 }

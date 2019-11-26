@@ -1,6 +1,8 @@
 #include "cpu.h"
-#include "utils.h"
+#include "debug.h"
 #include "instructions.h"
+#include "utils.h"
+#include "stdio.h"
 
 int main()
 {

@@ -1,22 +1,48 @@
 #include "utils.h"
-#include "cpu.h"
-#include "stdio.h"
 
-void memoryDump(int start, int length)
+#include "cpu.h"
+
+byte full_adder(const byte a, const byte b, byte *c)
 {
     int i;
+    byte ba, bb, cin, cout, r;
 
-    for (i = start; i < start+length; i++)
+    cin = *c;
+    for (i = 0, r = 0; i < 8; i++)
     {
-        if ((i-start)%16 == 0)
-            printf("%08X ", i);
+        ba = a >> i & 1;
+        bb = b >> i & 1;
 
-        printf("%02X ", mem[i]);
+        cout = ba & bb | bb & cin | ba & cin;
+        r |= (cin ^ (ba ^ bb)) << i;
 
-        if ((i-start)%16 == 15)
-            printf("\n");
+        cin = cout;
     }
 
-    printf("\n");
+    *c = cout;
+    return r;
+}
+
+byte BCD_adder(byte a, byte b, byte *c)
+{
+    int i;
+    byte ba, bb, cin, cout, r, rr;
+
+    cin = *c;
+    for (i = 0, r = 0; i < 2; i++)
+    {
+        ba = (a & 0xF << i*4) >> i*4;
+        bb = (b & 0xF << i*4) >> i*4;
+
+        rr = ba + bb + cin + 6;         // simple addition and + 6 to convert back to BCD
+
+        r |= (rr & 0xF) << i*4;
+        cout = rr & 0x10;
+
+        cin = cout;
+    }
+
+    *c = cout;
+    return r;
 }
 
