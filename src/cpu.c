@@ -96,7 +96,7 @@ void reset()
 void load_ROM(const char *filename)
 {
     FILE *f;
-    char op;
+    int op;
 
     PC = RAM_OFFSET;
 

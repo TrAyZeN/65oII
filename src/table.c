@@ -22,7 +22,7 @@ void (* instructions_table[256])() =
 /* F0 */ BEQ, SBC, IOP, IOP, IOP, SBC, INC, IOP, SED, SBC, IOP, IOP, IOP, SBC, INC, IOP
 };
 
-unsigned char cycles_table[256] =
+const unsigned char cycles_table[256] =
 {
 //        00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F
 /* 00 */   7,   6,   0,   0,   0,   3,   5,   0,   3,   2,   2,   0,   0,   4,   6,   0,
@@ -43,7 +43,7 @@ unsigned char cycles_table[256] =
 /* F0 */   7,   6,   0,   0,   0,   3,   5,   0,   3,   2,   2,   0,   0,   4,   6,   0
 };
 
-enum addressing_mode addrmode_table[256] =
+const enum addressing_mode addrmode_table[256] =
 {
 //         00    01    02    03    04    05    06    07    08    09    0A    0B    0C    0D    0E    0F
 /* 00 */ IMPL, XIND, NONE, NONE, NONE,  ZPG,  ZPG, NONE, IMPL,  IMM,  ACC, NONE, NONE,  ABS,  ABS, NONE,

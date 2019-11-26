@@ -4,7 +4,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-INLINE void ADC()
+void ADC()
 {
     int i;
     byte a, b, cin, cout;
@@ -40,7 +40,7 @@ INLINE void ADC()
     update_flag(A >> 7, N);
 }
 
-INLINE void AND()
+void AND()
 {
     A &= (*operand);
 
@@ -48,7 +48,7 @@ INLINE void AND()
     update_flag(A >> 7, N);
 }
 
-INLINE void ASL()
+void ASL()
 {
     update_flag((*operand) >> 7, C);
 
@@ -58,50 +58,50 @@ INLINE void ASL()
     update_flag((*operand) >> 7, N);
 }
 
-INLINE void BCC()
+void BCC()
 {
     if (!is_flag_set(C))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BCS()
+void BCS()
 {
     if (is_flag_set(C))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BEQ()
+void BEQ()
 {
     if (is_flag_set(Z))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BIT()
+void BIT()
 {
     update_flag((*operand) & 0b10000000, N);
     update_flag((*operand) & 0b01000000, V);
     update_flag(((*operand) & A) == 0x00, Z);
 }
 
-INLINE void BMI()
+void BMI()
 {
     if (is_flag_set(N))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BNE()
+void BNE()
 {
     if (!is_flag_set(Z))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BPL()
+void BPL()
 {
     if (!is_flag_set(N))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BRK()
+void BRK()
 {
     update_flag(1, I);
     push(PC+2);
@@ -109,40 +109,40 @@ INLINE void BRK()
     PC = mem[0xFFFE] | (mem[0xFFFF] << 8);
 }
 
-INLINE void BVC()
+void BVC()
 {
     if (!is_flag_set(V))
         PC = PC + (char) (*operand);
 }
 
-INLINE void BVS()
+void BVS()
 {
     if (is_flag_set(V))
         PC = PC + (char) (*operand);
 }
 
-INLINE void CLC()
+void CLC()
 {
     update_flag(0, C);
 }
 
-INLINE void CLD()
+void CLD()
 {
     update_flag(0, D);
 }
 
-INLINE void CLI()
+void CLI()
 {
     update_flag(0, I);
 }
 
-INLINE void CLV()
+void CLV()
 {
     update_flag(0, V);
 }
 
 // TODO: carry flag
-INLINE void CMP()
+void CMP()
 {
     byte r;
     r = A - (*operand);
@@ -151,7 +151,7 @@ INLINE void CMP()
     update_flag(r >> 7, N);
 }
 
-INLINE void CPX()
+void CPX()
 {
     byte r;
     r = X - (*operand);
@@ -160,7 +160,7 @@ INLINE void CPX()
     update_flag(r >> 7, N);
 }
 
-INLINE void CPY()
+void CPY()
 {
     byte r;
     r = Y - (*operand);
@@ -169,7 +169,7 @@ INLINE void CPY()
     update_flag(r >> 7, N);
 }
 
-INLINE void DEC()
+void DEC()
 {
     (*operand)--;
 
@@ -177,7 +177,7 @@ INLINE void DEC()
     update_flag((*operand) >> 7, N);
 }
 
-INLINE void DEX()
+void DEX()
 {
     X--;
 
@@ -185,7 +185,7 @@ INLINE void DEX()
     update_flag(X >> 7, N);
 }
 
-INLINE void DEY()
+void DEY()
 {
     Y--;
 
@@ -193,7 +193,7 @@ INLINE void DEY()
     update_flag(Y >> 7, N);
 }
 
-INLINE void EOR()
+void EOR()
 {
     A ^= (*operand);
 
@@ -201,7 +201,7 @@ INLINE void EOR()
     update_flag(A >> 7, N);
 }
 
-INLINE void INC()
+void INC()
 {
     (*operand)++;
 
@@ -209,7 +209,7 @@ INLINE void INC()
     update_flag((*operand) >> 7, N);
 }
 
-INLINE void INX()
+void INX()
 {
     X++;
 
@@ -217,7 +217,7 @@ INLINE void INX()
     update_flag(X >> 7, N);
 }
 
-INLINE void INY()
+void INY()
 {
     Y++;
 
@@ -225,18 +225,18 @@ INLINE void INY()
     update_flag(Y >> 7, N);
 }
 
-INLINE void JMP()
+void JMP()
 {
     PC = (*operand);
 }
 
-INLINE void JSR()
+void JSR()
 {
     push_word(PC+2);
     PC = (*operand);
 }
 
-INLINE void LDA()
+void LDA()
 {
     A = (*operand);
 
@@ -244,7 +244,7 @@ INLINE void LDA()
     update_flag(A >> 7, N);
 }
 
-INLINE void LDX()
+void LDX()
 {
     X = (*operand);
 
@@ -252,7 +252,7 @@ INLINE void LDX()
     update_flag(X >> 7, N);
 }
 
-INLINE void LDY()
+void LDY()
 {
     Y = (*operand);
 
@@ -260,7 +260,7 @@ INLINE void LDY()
     update_flag(Y >> 7, N);
 }
 
-INLINE void LSR()
+void LSR()
 {
     update_flag((*operand) & 0b00000001, C);
 
@@ -270,9 +270,9 @@ INLINE void LSR()
     update_flag((*operand) >> 7, N);
 }
 
-INLINE void NOP() {}
+void NOP() {}
 
-INLINE void ORA()
+void ORA()
 {
     A |= (*operand);
 
@@ -280,17 +280,17 @@ INLINE void ORA()
     update_flag(A >> 7, N);
 }
 
-INLINE void PHA()
+void PHA()
 {
     push(A);
 }
 
-INLINE void PHP()
+void PHP()
 {
     push(SR);
 }
 
-INLINE void PLA()
+void PLA()
 {
     A = pull();
 
@@ -298,24 +298,24 @@ INLINE void PLA()
     update_flag(A >> 7, N);
 }
 
-INLINE void PLP()
+void PLP()
 {
     SR = pull();
 }
 
-INLINE void RTI()
+void RTI()
 {
     SR = pull();
     PC = pull();
 }
 
-INLINE void RTS()
+void RTS()
 {
     PC = pull() | pull() << 4;
     PC++;
 }
 
-INLINE void SBC()
+void SBC()
 {
     int i;
     byte a, b, bin, bout;
@@ -337,37 +337,37 @@ INLINE void SBC()
     update_flag(*operand >> 7, N);
 }
 
-INLINE void SEC()
+void SEC()
 {
     update_flag(1, C);
 }
 
-INLINE void SED()
+void SED()
 {
     update_flag(1, D);
 }
 
-INLINE void SEI()
+void SEI()
 {
     update_flag(1, I);
 }
 
-INLINE void STA()
+void STA()
 {
     *operand = A;
 }
 
-INLINE void STX()
+void STX()
 {
     *operand = X;
 }
 
-INLINE void STY()
+void STY()
 {
     *operand = Y;
 }
 
-INLINE void TAX()
+void TAX()
 {
     X = A;
 
@@ -375,7 +375,7 @@ INLINE void TAX()
     update_flag(X >> 7, N);
 }
 
-INLINE void TAY()
+void TAY()
 {
     Y = A;
 
@@ -383,7 +383,7 @@ INLINE void TAY()
     update_flag(Y >> 7, N);
 }
 
-INLINE void TSX()
+void TSX()
 {
     X = SP;
 
@@ -391,7 +391,7 @@ INLINE void TSX()
     update_flag(X >> 7, N);
 }
 
-INLINE void TXA()
+void TXA()
 {
     A = X;
 
@@ -399,12 +399,12 @@ INLINE void TXA()
     update_flag(A >> 7, N);
 }
 
-INLINE void TXS()
+void TXS()
 {
     SP = X;
 }
 
-INLINE void TYA()
+void TYA()
 {
     A = Y;
 
