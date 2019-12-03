@@ -13,7 +13,7 @@ byte full_adder(const byte a, const byte b, byte *c)
         ba = a >> i & 1;
         bb = b >> i & 1;
 
-        cout = ba & bb | bb & cin | ba & cin;
+        cout = (ba & bb) | (bb & cin) | (ba & cin);
         r |= (cin ^ (ba ^ bb)) << i;
 
         cin = cout;

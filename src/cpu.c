@@ -103,7 +103,7 @@ void load_ROM(const char *filename)
     f = fopen(filename, "rb");
     if (f == NULL)
     {
-        printf("Error : Failed to open file");
+        printf("Error : Failed to open file\n");
         exit(EXIT_FAILURE);
     }
 
