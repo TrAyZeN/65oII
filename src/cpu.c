@@ -22,7 +22,7 @@ word read_16()
 
 void push(byte b)
 {
-    mem[STACK_OFFSET + SP++] = B;
+    mem[STACK_OFFSET + SP++] = b;
 }
 
 void push_word(word w)
@@ -77,6 +77,9 @@ byte *read_operand()
             return &mem[read_8() + X];
         case ZPGY:
             return &mem[read_8() + Y];
+	default:
+	    printf("Error : invalid addressing mode\n");
+	    exit(EXIT_FAILURE);
     }
 }
 

@@ -318,7 +318,7 @@ void SBC()
         a = A >> i;
         b = (*operand) >> i;
 
-        bout = ~a & bin | ~a & b | b & bin;
+        bout = (~a & bin) | (~a & b) | (b & bin);
         A |= ((a ^ b) ^ bin) << i;
 
         bin = bout;
