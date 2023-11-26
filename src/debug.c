@@ -1,5 +1,6 @@
-#include "cpu.h"
 #include "debug.h"
+
+#include "cpu.h"
 #include "stdio.h"
 
 void memoryDump(int start, int length) {

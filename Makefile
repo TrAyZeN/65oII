@@ -40,4 +40,4 @@ mrproper:
 
 .PHONY: fmt
 fmt:
-	clang-format --style=file -i src/**.[ch] disassembler/**.[ch]
+	clang-format --style=file -i src/**.[ch] include/**.h disassembler/**.[ch]
