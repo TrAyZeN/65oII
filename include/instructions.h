@@ -8,123 +8,127 @@
 #define INLINE __inline
 #endif
 
-extern void (*instructions_table[256])();
+typedef void (*instruction_func)(struct emu_state *);
+
+extern instruction_func instructions_table[256];
 extern const unsigned char cycles_table[256];
 extern const enum addressing_mode addrmode_table[256];
 
-void adc(); // Add Memory to Accumulator with Carry
+void adc(struct emu_state *state); // Add Memory to Accumulator with Carry
 
 // clang-format off
-void and(); // AND Memory with Accumulator
+void and(struct emu_state *state); // AND Memory with Accumulator
 // clang-format on
 
-void asl(); // Shift Left One Bit (Memory or Accumulator)
+void asl(struct emu_state *state); // Shift Left One Bit (Memory or Accumulator)
 
-void bcc(); // Branch on Carry Clear
+void bcc(struct emu_state *state); // Branch on Carry Clear
 
-void bcs(); // Branch on Carry Set
+void bcs(struct emu_state *state); // Branch on Carry Set
 
-void beq(); // Branch on Result Zero
+void beq(struct emu_state *state); // Branch on Result Zero
 
-void bit(); // Test Bits in Memory with Accumulator
+void bit(struct emu_state *state); // Test Bits in Memory with Accumulator
 
-void bmi(); // Branch on Result Minus
+void bmi(struct emu_state *state); // Branch on Result Minus
 
-void bne(); // Branch on Result not Zero
+void bne(struct emu_state *state); // Branch on Result not Zero
 
-void bpl(); // Branch on Result Plus
+void bpl(struct emu_state *state); // Branch on Result Plus
 
 // WARN: brk naming conflicts with glibc function
-void ibrk(); // Force Break
+void ibrk(struct emu_state *state); // Force Break
 
-void bvc(); // Branch on Overflow Clear
+void bvc(struct emu_state *state); // Branch on Overflow Clear
 
-void bvs(); // Branch on Overflow Set
+void bvs(struct emu_state *state); // Branch on Overflow Set
 
-void clc(); // Clear Carry Flag
+void clc(struct emu_state *state); // Clear Carry Flag
 
-void cld(); // Clear Decimal Mode
+void cld(struct emu_state *state); // Clear Decimal Mode
 
-void cli(); // Clear Interrupt Disable Bit
+void cli(struct emu_state *state); // Clear Interrupt Disable Bit
 
-void clv(); // Clear Overflow Flag
+void clv(struct emu_state *state); // Clear Overflow Flag
 
-void cmp(); // Compare Memory with Accumulator
+void cmp(struct emu_state *state); // Compare Memory with Accumulator
 
-void cpx(); // Compare Memory and Index X
+void cpx(struct emu_state *state); // Compare Memory and Index X
 
-void cpy(); // Compare Memory and Index Y
+void cpy(struct emu_state *state); // Compare Memory and Index Y
 
-void dec(); // Decrement Memory by One
+void dec(struct emu_state *state); // Decrement Memory by One
 
-void dex(); // Decrement Index X by One
+void dex(struct emu_state *state); // Decrement Index X by One
 
-void dey(); // Decrement Index Y by One
+void dey(struct emu_state *state); // Decrement Index Y by One
 
-void eor(); // Exclusive-OR Memory with Accumulator
+void eor(struct emu_state *state); // Exclusive-OR Memory with Accumulator
 
-void inc(); // Increment Memory by One
+void inc(struct emu_state *state); // Increment Memory by One
 
-void inx(); // Increment Index X by One
+void inx(struct emu_state *state); // Increment Index X by One
 
-void iny(); // Increment Index Y by One
+void iny(struct emu_state *state); // Increment Index Y by One
 
-void jmp(); // Jump to New Location
+void jmp(struct emu_state *state); // Jump to New Location
 
-void jsr(); // Jump to New Location Saving Return Adress
+void jsr(struct emu_state *state); // Jump to New Location Saving Return Adress
 
-void lda(); // Load Accumulator with Memory
+void lda(struct emu_state *state); // Load Accumulator with Memory
 
-void ldx(); // Load Index X with Memory
+void ldx(struct emu_state *state); // Load Index X with Memory
 
-void ldy(); // Load Index Y with Memory
+void ldy(struct emu_state *state); // Load Index Y with Memory
 
-void lsr(); // Shift One Bit Right (Memory or Accumulator)
+void lsr(
+    struct emu_state *state); // Shift One Bit Right (Memory or Accumulator)
 
-void nop(); // No Operation
+void nop(struct emu_state *state); // No Operation
 
-void ora(); // OR Memory with Accumulator
+void ora(struct emu_state *state); // OR Memory with Accumulator
 
-void pha(); // Push Accumulator on Stack
+void pha(struct emu_state *state); // Push Accumulator on Stack
 
-void php(); // Push Processor Status on Stack
+void php(struct emu_state *state); // Push Processor Status on Stack
 
-void pla(); // Pull Accumulator from Stack
+void pla(struct emu_state *state); // Pull Accumulator from Stack
 
-void plp(); // Pull Processor Status from Stack
+void plp(struct emu_state *state); // Pull Processor Status from Stack
 
-void rti(); // Return from Interrupt
+void rti(struct emu_state *state); // Return from Interrupt
 
-void rts(); // Return from Subroutine
+void rts(struct emu_state *state); // Return from Subroutine
 
-void sbc(); // Substract Memory from Accumulator with Borrow
+// Substract Memory from Accumulator with Borrow
+void sbc(struct emu_state *state);
 
-void sec(); // Set Carry Flag
+void sec(struct emu_state *state); // Set Carry Flag
 
-void sed(); // Set Decimal Flag
+void sed(struct emu_state *state); // Set Decimal Flag
 
-void sei(); // Set Interrupt Disable Status
+void sei(struct emu_state *state); // Set Interrupt Disable Status
 
-void sta(); // Store Accumulator in Memory
+void sta(struct emu_state *state); // Store Accumulator in Memory
 
-void stx(); // Store Index X in Memory
+void stx(struct emu_state *state); // Store Index X in Memory
 
-void sty(); // Store Index Y in Memory
+void sty(struct emu_state *state); // Store Index Y in Memory
 
-void tax(); // Transfer Accumulator to Index X
+void tax(struct emu_state *state); // Transfer Accumulator to Index X
 
-void tay(); // Transfer Accumulator to Index Y
+void tay(struct emu_state *state); // Transfer Accumulator to Index Y
 
-void tsx(); // Transfer Stack Pointer to Index X
+void tsx(struct emu_state *state); // Transfer Stack Pointer to Index X
 
-void txa(); // Transfer Index X to Accumulator
+void txa(struct emu_state *state); // Transfer Index X to Accumulator
 
-void txs(); // Transfer Index X to Stack Register
+void txs(struct emu_state *state); // Transfer Index X to Stack Register
 
-void tya(); // Transfer Index Y to Accumulator
+void tya(struct emu_state *state); // Transfer Index Y to Accumulator
 
-void nip(); // Not Implemented
+void nip(struct emu_state *state); // Not Implemented
 
-void iop(); // Invalid Operation
+void iop(struct emu_state *state); // Invalid Operation
 
 #endif

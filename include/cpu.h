@@ -1,8 +1,10 @@
 #ifndef CPU_H_
 #define CPU_H_
 
-typedef unsigned char byte;
-typedef unsigned short word;
+#include <stdint.h>
+
+typedef uint8_t byte;
+typedef uint16_t word;
 
 #define CLOCK_SPEED 1000000 // 1 MHz clock speed
 #define STACK_OFFSET 0x0100
@@ -32,19 +34,23 @@ struct registers {
     byte sp;
 };
 
-extern struct registers regs;
+struct emu_state {
+    struct registers regs;
 
-/*
- *  $0000, $00FF  zero page RAM
- *  $0100, $01FF  Stack
- *  $0200, $FFF9  RAM
- *  $FFFA, $FFFB  NMI (Non-Maskable Interrupt) vector
- *  $FFFC, $FFFD  RES (Reset) vector
- *  $FFFE, $FFFF  IRQ (Interrupt Request) vector
- */
-extern byte mem[0x10000]; // 64KB memory
-extern byte opcode; // opcode
-extern byte *operand;
+    /*
+     * 64KB memory:
+     *  $0000, $00FF  zero page RAM
+     *  $0100, $01FF  Stack
+     *  $0200, $FFF9  RAM
+     *  $FFFA, $FFFB  NMI (Non-Maskable Interrupt) vector
+     *  $FFFC, $FFFD  RES (Reset) vector
+     *  $FFFE, $FFFF  IRQ (Interrupt Request) vector
+     */
+    byte mem[0x10000];
+
+    byte opcode;
+    byte *operand;
+};
 
 enum addressing_mode {
     NONE,
@@ -63,20 +69,20 @@ enum addressing_mode {
     ZPGY
 };
 
-byte read_8();
-word read_16();
+byte read_8(struct emu_state *state);
+word read_16(struct emu_state *state);
 
-void push(byte b);
-void push_word(word w);
-byte pull();
+void push(struct emu_state *state, byte b);
+void push_word(struct emu_state *state, word w);
+byte pull(struct emu_state *state);
 
-void update_flag(byte val, byte flag);
-byte is_flag_set(byte flag);
+void update_flag(struct emu_state *state, byte val, byte flag);
+byte is_flag_set(struct emu_state *state, byte flag);
 
-byte *read_operand();
+byte *read_operand(struct emu_state *state);
 
-void reset();
-void load_rom(const char *filename);
-void run();
+void reset(struct emu_state *state);
+void load_rom(struct emu_state *state, const char *filename);
+void run(struct emu_state *state);
 
 #endif

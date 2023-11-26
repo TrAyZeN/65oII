@@ -9,95 +9,88 @@
 #include "unistd.h"
 #endif
 
-struct registers regs;
-byte mem[0x10000];
-byte opcode;
-byte *operand;
-
-byte counter;
-
-byte read_8() {
-    return mem[regs.pc++];
+byte read_8(struct emu_state *state) {
+    return state->mem[state->regs.pc++];
 }
 
-word read_16() {
-    return mem[regs.pc++] | (mem[regs.pc++] << 8);
+word read_16(struct emu_state *state) {
+    return state->mem[state->regs.pc++] | (state->mem[state->regs.pc++] << 8);
 }
 
-void push(byte b) {
-    mem[STACK_OFFSET + regs.sp++] = b;
+void push(struct emu_state *state, byte b) {
+    state->mem[STACK_OFFSET + state->regs.sp++] = b;
 }
 
-void push_word(word w) {
-    push(w & 0xFF);
-    push(w >> 8);
+void push_word(struct emu_state *state, word w) {
+    push(state, w & 0xFF);
+    push(state, w >> 8);
 }
 
-byte pull() {
-    return mem[STACK_OFFSET + regs.sp--];
+byte pull(struct emu_state *state) {
+    return state->mem[STACK_OFFSET + state->regs.sp--];
 }
 
-void update_flag(byte val, byte flag) {
-    if (val)
-        regs.sr |= flag;
-    else
-        regs.sr &= ~flag;
+void update_flag(struct emu_state *state, byte val, byte flag) {
+    if (val) {
+        state->regs.sr |= flag;
+    } else {
+        state->regs.sr &= ~flag;
+    }
 }
 
-byte is_flag_set(byte flag) {
-    return regs.sr & flag;
+byte is_flag_set(struct emu_state *state, byte flag) {
+    return state->regs.sr & flag;
 }
 
-byte *read_operand() {
-    switch (addrmode_table[opcode]) {
+byte *read_operand(struct emu_state *state) {
+    switch (addrmode_table[state->opcode]) {
     case ACC:
-        return &regs.a;
+        return &state->regs.a;
     case ABS:
-        return &mem[read_16()];
+        return &state->mem[read_16(state)];
     case ABSX:
-        return &mem[read_16() + regs.x];
+        return &state->mem[read_16(state) + state->regs.x];
     case ABSY:
-        return &mem[read_16() + regs.y];
+        return &state->mem[read_16(state) + state->regs.y];
     case IMM:
-        return &mem[regs.pc++];
+        return &state->mem[state->regs.pc++];
     case IND:
-        return &mem[mem[read_16()]];
+        return &state->mem[state->mem[read_16(state)]];
     case XIND:
-        return &mem[mem[read_8() + regs.x]];
+        return &state->mem[state->mem[read_8(state) + state->regs.x]];
     case INDY:
-        return &mem[mem[read_8()] + regs.y];
+        return &state->mem[state->mem[read_8(state)] + state->regs.y];
     case REL:
-        return &mem[regs.pc++];
+        return &state->mem[state->regs.pc++];
     case ZPG:
-        return &mem[read_8()];
+        return &state->mem[read_8(state)];
     case ZPGX:
-        return &mem[read_8() + regs.x];
+        return &state->mem[read_8(state) + state->regs.x];
     case ZPGY:
-        return &mem[read_8() + regs.y];
+        return &state->mem[read_8(state) + state->regs.y];
     default:
         printf("Error : invalid addressing mode\n");
         exit(EXIT_FAILURE);
     }
 }
 
-void reset() {
+void reset(struct emu_state *state) {
     int i;
 
-    regs.pc = RAM_OFFSET;
-    regs.sp = 0;
-    regs.sr = 0b00100000;
-    counter = 0;
+    state->regs.pc = RAM_OFFSET;
+    state->regs.sp = 0;
+    state->regs.sr = 0b00100000;
 
     for (i = 0; i < 64000; i++) {
-        mem[i] = 0;
+        state->mem[i] = 0;
     }
 }
 
-void load_rom(const char *filename) {
+void load_rom(struct emu_state *state, const char *filename) {
     FILE *f;
     int op;
 
-    regs.pc = RAM_OFFSET;
+    state->regs.pc = RAM_OFFSET;
 
     f = fopen(filename, "rb");
     if (f == NULL) {
@@ -106,19 +99,19 @@ void load_rom(const char *filename) {
     }
 
     while ((op = fgetc(f)) != EOF) {
-        mem[regs.pc++] = op;
+        state->mem[state->regs.pc++] = op;
     }
 
     fclose(f);
 
-    regs.pc = RAM_OFFSET;
+    state->regs.pc = RAM_OFFSET;
 }
 
-void run() {
+void run(struct emu_state *state) {
     for (;;) {
-        opcode = mem[regs.pc++];
-        operand = read_operand();
-        instructions_table[opcode]();
+        state->opcode = state->mem[state->regs.pc++];
+        state->operand = read_operand(state);
+        instructions_table[state->opcode](state);
 
         // sleep(1.0 / CLOCK_SPEED);
     }

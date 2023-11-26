@@ -1,5 +1,8 @@
-CPPFLAGS := -I include
-CFLAGS := -Wall -Wextra 
+CC ?= gcc
+
+CPPFLAGS := -MMD -Iinclude
+CFLAGS := -std=gnu99 -Wall -Wextra -Wshadow -Wdouble-promotion -Wundef \
+	 -Wconversion -Wsign-conversion -Wformat=2 -funsigned-char
 LDFLAGS :=
 
 BUILDDIR := build
@@ -24,7 +27,7 @@ $(BINDIR)/emulator: $(EMU_OBJS)
 
 $(BINDIR)/disassembler:
 	@mkdir -p $(@D)
-	$(CC) disassembler/disassembler.c -o $@ -I disassembler
+	$(CC) -I disassembler $(CFLAGS) disassembler/disassembler.c -o $@
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
@@ -41,3 +44,5 @@ mrproper:
 .PHONY: fmt
 fmt:
 	clang-format --style=file -i src/**.[ch] include/**.h disassembler/**.[ch]
+
+-include $(DEPS)

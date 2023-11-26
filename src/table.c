@@ -3,7 +3,7 @@
 
 // clang-format off
 
-void (* instructions_table[256])() =
+instruction_func instructions_table[256] =
 {
 //        00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F
 /* 00 */ ibrk, ora, iop, iop, iop, ora, asl, iop, php, ora, asl, iop, iop, ora, asl, iop,

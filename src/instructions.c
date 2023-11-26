@@ -4,368 +4,370 @@
 #include "stdlib.h"
 #include "utils.h"
 
-void adc() {
+void adc(struct emu_state *state) {
     int i;
     byte a, b, cin, cout;
-    cin = is_flag_set(SR_C);
+    cin = is_flag_set(state, SR_C);
 
-    if (is_flag_set(SR_D)) {
+    if (is_flag_set(state, SR_D)) {
         for (i = 0; i < 2; i++) {
-            a = (regs.a & 0xF << i * 4) >> i * 4;
-            b = ((*operand) & 0xF << i * 4) >> i * 4;
+            a = (state->regs.a & 0xF << i * 4) >> i * 4;
+            b = ((*state->operand) & 0xF << i * 4) >> i * 4;
 
             byte r = a + b + cin
                 + 6; // simple addition and + 6 to convert back to BCD
             cout = r & 0x10;
 
-            regs.a = (regs.a | 0xF << i * 4) & (r & 0xF) << i * 4;
+            state->regs.a = (state->regs.a | 0xF << i * 4) & (r & 0xF) << i * 4;
 
             cin = cout;
         }
     } else {
-        regs.a = full_adder(regs.a, (*operand), &cin);
+        state->regs.a = full_adder(state->regs.a, (*state->operand), &cin);
     }
 
-    update_flag(cin, SR_C);
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, cin, SR_C);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void and () {
-    regs.a &= (*operand);
+// clang-format off
+void and(struct emu_state *state) {
+    state->regs.a &= (*state->operand);
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 8, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 8, SR_N);
+}
+// clang-format on
+
+void asl(struct emu_state *state) {
+    update_flag(state, (*state->operand) >> 7, SR_C);
+
+    *state->operand <<= 1;
+
+    update_flag(state, !(*state->operand), SR_Z);
+    update_flag(state, (*state->operand) >> 7, SR_N);
 }
 
-void asl() {
-    update_flag((*operand) >> 7, SR_C);
-
-    *operand <<= 1;
-
-    update_flag(!(*operand), SR_Z);
-    update_flag((*operand) >> 7, SR_N);
-}
-
-void bcc() {
-    if (!is_flag_set(SR_C)) {
-        regs.pc = regs.pc + (char)(*operand);
-    }
-}
-
-void bcs() {
-    if (is_flag_set(SR_C)) {
-        regs.pc = regs.pc + (char)(*operand);
+void bcc(struct emu_state *state) {
+    if (!is_flag_set(state, SR_C)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void beq() {
-    if (is_flag_set(SR_Z)) {
-        regs.pc = regs.pc + (char)(*operand);
+void bcs(struct emu_state *state) {
+    if (is_flag_set(state, SR_C)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void bit() {
-    update_flag((*operand) & 0b10000000, SR_N);
-    update_flag((*operand) & 0b01000000, SR_V);
-    update_flag(((*operand) & regs.a) == 0x00, SR_Z);
-}
-
-void bmi() {
-    if (is_flag_set(SR_N)) {
-        regs.pc = regs.pc + (char)(*operand);
+void beq(struct emu_state *state) {
+    if (is_flag_set(state, SR_Z)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void bne() {
-    if (!is_flag_set(SR_Z)) {
-        regs.pc = regs.pc + (char)(*operand);
+void bit(struct emu_state *state) {
+    update_flag(state, (*state->operand) & 0b10000000, SR_N);
+    update_flag(state, (*state->operand) & 0b01000000, SR_V);
+    update_flag(state, ((*state->operand) & state->regs.a) == 0x00, SR_Z);
+}
+
+void bmi(struct emu_state *state) {
+    if (is_flag_set(state, SR_N)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void bpl() {
-    if (!is_flag_set(SR_N)) {
-        regs.pc = regs.pc + (char)(*operand);
+void bne(struct emu_state *state) {
+    if (!is_flag_set(state, SR_Z)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void ibrk() {
-    update_flag(1, SR_I);
-    push(regs.pc + 2);
-    push(regs.sr);
-    regs.pc = mem[0xFFFF] | (mem[0xFFFF] << 8);
-}
-
-void bvc() {
-    if (!is_flag_set(SR_V)) {
-        regs.pc = regs.pc + (char)(*operand);
+void bpl(struct emu_state *state) {
+    if (!is_flag_set(state, SR_N)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void bvs() {
-    if (is_flag_set(SR_V)) {
-        regs.pc = regs.pc + (char)(*operand);
+void ibrk(struct emu_state *state) {
+    update_flag(state, 1, SR_I);
+    push(state, state->regs.pc + 2);
+    push(state, state->regs.sr);
+    state->regs.pc = state->mem[0xFFFF] | (state->mem[0xFFFF] << 8);
+}
+
+void bvc(struct emu_state *state) {
+    if (!is_flag_set(state, SR_V)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
     }
 }
 
-void clc() {
-    update_flag(0, SR_C);
+void bvs(struct emu_state *state) {
+    if (is_flag_set(state, SR_V)) {
+        state->regs.pc = state->regs.pc + (char)(*state->operand);
+    }
 }
 
-void cld() {
-    update_flag(0, SR_D);
+void clc(struct emu_state *state) {
+    update_flag(state, 0, SR_C);
 }
 
-void cli() {
-    update_flag(0, SR_I);
+void cld(struct emu_state *state) {
+    update_flag(state, 0, SR_D);
 }
 
-void clv() {
-    update_flag(0, SR_V);
+void cli(struct emu_state *state) {
+    update_flag(state, 0, SR_I);
+}
+
+void clv(struct emu_state *state) {
+    update_flag(state, 0, SR_V);
 }
 
 // TODO: carry flag
-void cmp() {
+void cmp(struct emu_state *state) {
     byte r;
-    r = regs.a - (*operand);
+    r = state->regs.a - (*state->operand);
 
-    update_flag(!r, SR_Z);
-    update_flag(r >> 7, SR_N);
+    update_flag(state, !r, SR_Z);
+    update_flag(state, r >> 7, SR_N);
 }
 
-void cpx() {
+void cpx(struct emu_state *state) {
     byte r;
-    r = regs.x - (*operand);
+    r = state->regs.x - (*state->operand);
 
-    update_flag(!r, SR_Z);
-    update_flag(r >> 7, SR_N);
+    update_flag(state, !r, SR_Z);
+    update_flag(state, r >> 7, SR_N);
 }
 
-void cpy() {
+void cpy(struct emu_state *state) {
     byte r;
-    r = regs.y - (*operand);
+    r = state->regs.y - (*state->operand);
 
-    update_flag(!r, SR_Z);
-    update_flag(r >> 7, SR_N);
+    update_flag(state, !r, SR_Z);
+    update_flag(state, r >> 7, SR_N);
 }
 
-void dec() {
-    (*operand)--;
+void dec(struct emu_state *state) {
+    (*state->operand)--;
 
-    update_flag(!(*operand), SR_Z);
-    update_flag((*operand) >> 7, SR_N);
+    update_flag(state, !(*state->operand), SR_Z);
+    update_flag(state, (*state->operand) >> 7, SR_N);
 }
 
-void dex() {
-    regs.x--;
+void dex(struct emu_state *state) {
+    state->regs.x--;
 
-    update_flag(!regs.x, SR_Z);
-    update_flag(regs.x >> 7, SR_N);
+    update_flag(state, !state->regs.x, SR_Z);
+    update_flag(state, state->regs.x >> 7, SR_N);
 }
 
-void dey() {
-    regs.y--;
+void dey(struct emu_state *state) {
+    state->regs.y--;
 
-    update_flag(!regs.y, SR_Z);
-    update_flag(regs.y >> 7, SR_N);
+    update_flag(state, !state->regs.y, SR_Z);
+    update_flag(state, state->regs.y >> 7, SR_N);
 }
 
-void eor() {
-    regs.a ^= (*operand);
+void eor(struct emu_state *state) {
+    state->regs.a ^= (*state->operand);
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void inc() {
-    (*operand)++;
+void inc(struct emu_state *state) {
+    (*state->operand)++;
 
-    update_flag(!(*operand), SR_Z);
-    update_flag((*operand) >> 7, SR_N);
+    update_flag(state, !(*state->operand), SR_Z);
+    update_flag(state, (*state->operand) >> 7, SR_N);
 }
 
-void inx() {
-    regs.x++;
+void inx(struct emu_state *state) {
+    state->regs.x++;
 
-    update_flag(!regs.x, SR_Z);
-    update_flag(regs.x >> 7, SR_N);
+    update_flag(state, !state->regs.x, SR_Z);
+    update_flag(state, state->regs.x >> 7, SR_N);
 }
 
-void iny() {
-    regs.y++;
+void iny(struct emu_state *state) {
+    state->regs.y++;
 
-    update_flag(!regs.y, SR_Z);
-    update_flag(regs.y >> 7, SR_N);
+    update_flag(state, !state->regs.y, SR_Z);
+    update_flag(state, state->regs.y >> 7, SR_N);
 }
 
-void jmp() {
-    regs.pc = (*operand);
+void jmp(struct emu_state *state) {
+    state->regs.pc = (*state->operand);
 }
 
-void jsr() {
-    push_word(regs.pc + 2);
-    regs.pc = (*operand);
+void jsr(struct emu_state *state) {
+    push_word(state, state->regs.pc + 2);
+    state->regs.pc = (*state->operand);
 }
 
-void lda() {
-    regs.a = (*operand);
+void lda(struct emu_state *state) {
+    state->regs.a = (*state->operand);
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void ldx() {
-    regs.x = (*operand);
+void ldx(struct emu_state *state) {
+    state->regs.x = (*state->operand);
 
-    update_flag(!regs.x, SR_Z);
-    update_flag(regs.x >> 7, SR_N);
+    update_flag(state, !state->regs.x, SR_Z);
+    update_flag(state, state->regs.x >> 7, SR_N);
 }
 
-void ldy() {
-    regs.y = (*operand);
+void ldy(struct emu_state *state) {
+    state->regs.y = (*state->operand);
 
-    update_flag(!regs.y, SR_Z);
-    update_flag(regs.y >> 7, SR_N);
+    update_flag(state, !state->regs.y, SR_Z);
+    update_flag(state, state->regs.y >> 7, SR_N);
 }
 
-void lsr() {
-    update_flag((*operand) & 0b00000001, SR_C);
+void lsr(struct emu_state *state) {
+    update_flag(state, (*state->operand) & 0b00000001, SR_C);
 
-    *operand >>= 1;
+    *state->operand >>= 1;
 
-    update_flag(!(*operand), SR_Z);
-    update_flag((*operand) >> 7, SR_N);
+    update_flag(state, !(*state->operand), SR_Z);
+    update_flag(state, (*state->operand) >> 7, SR_N);
 }
 
-void nop() {
+void nop(struct emu_state *state) {
 }
 
-void ora() {
-    regs.a |= (*operand);
+void ora(struct emu_state *state) {
+    state->regs.a |= (*state->operand);
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void pha() {
-    push(regs.a);
+void pha(struct emu_state *state) {
+    push(state, state->regs.a);
 }
 
-void php() {
-    push(regs.sr);
+void php(struct emu_state *state) {
+    push(state, state->regs.sr);
 }
 
-void pla() {
-    regs.a = pull();
+void pla(struct emu_state *state) {
+    state->regs.a = pull(state);
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void plp() {
-    regs.sr = pull();
+void plp(struct emu_state *state) {
+    state->regs.sr = pull(state);
 }
 
-void rti() {
-    regs.sr = pull();
-    regs.pc = pull();
+void rti(struct emu_state *state) {
+    state->regs.sr = pull(state);
+    state->regs.pc = pull(state);
 }
 
-void rts() {
-    regs.pc = pull() | pull() << 4;
-    regs.pc++;
+void rts(struct emu_state *state) {
+    state->regs.pc = pull(state) | pull(state) << 4;
+    state->regs.pc++;
 }
 
-void sbc() {
+void sbc(struct emu_state *state) {
     int i;
     byte a, b, bin, bout;
-    bin = is_flag_set(SR_C);
+    bin = is_flag_set(state, SR_C);
 
     for (i = 0; i < 8; i++) {
-        a = regs.a >> i;
-        b = (*operand) >> i;
+        a = state->regs.a >> i;
+        b = (*state->operand) >> i;
 
         bout = (~a & bin) | (~a & b) | (b & bin);
-        regs.a |= ((a ^ b) ^ bin) << i;
+        state->regs.a |= ((a ^ b) ^ bin) << i;
 
         bin = bout;
     }
 
-    update_flag(bout, SR_C);
-    update_flag(!(*operand), SR_Z);
-    update_flag(*operand >> 7, SR_N);
+    update_flag(state, bout, SR_C);
+    update_flag(state, !(*state->operand), SR_Z);
+    update_flag(state, *state->operand >> 7, SR_N);
 }
 
-void sec() {
-    update_flag(1, SR_C);
+void sec(struct emu_state *state) {
+    update_flag(state, 1, SR_C);
 }
 
-void sed() {
-    update_flag(1, SR_D);
+void sed(struct emu_state *state) {
+    update_flag(state, 1, SR_D);
 }
 
-void sei() {
-    update_flag(1, SR_I);
+void sei(struct emu_state *state) {
+    update_flag(state, 1, SR_I);
 }
 
-void sta() {
-    *operand = regs.a;
+void sta(struct emu_state *state) {
+    *state->operand = state->regs.a;
 }
 
-void stx() {
-    *operand = regs.x;
+void stx(struct emu_state *state) {
+    *state->operand = state->regs.x;
 }
 
-void sty() {
-    *operand = regs.y;
+void sty(struct emu_state *state) {
+    *state->operand = state->regs.y;
 }
 
-void tax() {
-    regs.x = regs.a;
+void tax(struct emu_state *state) {
+    state->regs.x = state->regs.a;
 
-    update_flag(!regs.x, SR_Z);
-    update_flag(regs.x >> 7, SR_N);
+    update_flag(state, !state->regs.x, SR_Z);
+    update_flag(state, state->regs.x >> 7, SR_N);
 }
 
-void tay() {
-    regs.y = regs.a;
+void tay(struct emu_state *state) {
+    state->regs.y = state->regs.a;
 
-    update_flag(!regs.y, SR_Z);
-    update_flag(regs.y >> 7, SR_N);
+    update_flag(state, !state->regs.y, SR_Z);
+    update_flag(state, state->regs.y >> 7, SR_N);
 }
 
-void tsx() {
-    regs.x = regs.sp;
+void tsx(struct emu_state *state) {
+    state->regs.x = state->regs.sp;
 
-    update_flag(!regs.x, SR_Z);
-    update_flag(regs.x >> 7, SR_N);
+    update_flag(state, !state->regs.x, SR_Z);
+    update_flag(state, state->regs.x >> 7, SR_N);
 }
 
-void txa() {
-    regs.a = regs.x;
+void txa(struct emu_state *state) {
+    state->regs.a = state->regs.x;
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void txs() {
-    regs.sp = regs.x;
+void txs(struct emu_state *state) {
+    state->regs.sp = state->regs.x;
 }
 
-void tya() {
-    regs.a = regs.y;
+void tya(struct emu_state *state) {
+    state->regs.a = state->regs.y;
 
-    update_flag(!regs.a, SR_Z);
-    update_flag(regs.a >> 7, SR_N);
+    update_flag(state, !state->regs.a, SR_Z);
+    update_flag(state, state->regs.a >> 7, SR_N);
 }
 
-void nip() {
-    printf("Not Implemented Operation : %02X\n", opcode);
+void nip(struct emu_state *state) {
+    printf("Not Implemented Operation : %02X\n", state->opcode);
     exit(EXIT_FAILURE);
 }
 
-void iop() {
-    printf("Invalid Operation : %02X\n", opcode);
-    printf("PC : $%04X\n", regs.pc);
+void iop(struct emu_state *state) {
+    printf("Invalid Operation : %02X\n", state->opcode);
+    printf("PC : $%04X\n", state->regs.pc);
     exit(EXIT_FAILURE);
 }
