@@ -4,19 +4,19 @@
 typedef unsigned char byte;
 typedef unsigned short word;
 
-#define CLOCK_SPEED  1000000  // 1 MHz clock speed
+#define CLOCK_SPEED 1000000 // 1 MHz clock speed
 #define STACK_OFFSET 0x0100
-#define RAM_OFFSET   0x0200
+#define RAM_OFFSET 0x0200
 
 // SR flags
-#define N 0b10000000    // Negative
-#define V 0b01000000    // Overflow
+#define SR_N 0b10000000 // Negative
+#define SR_V 0b01000000 // Overflow
 //      -                  ignored
-#define B 0b00010000    // Break
-#define D 0b00001000    // Decimal (use BCD for arithmetics)
-#define I 0b00000100    // Interrupt (IRQ disable)
-#define Z 0b00000010    // Zero
-#define C 0b00000001    // Carry
+#define SR_B 0b00010000 // Break
+#define SR_D 0b00001000 // Decimal (use BCD for arithmetics)
+#define SR_I 0b00000100 // Interrupt (IRQ disable)
+#define SR_Z 0b00000010 // Zero
+#define SR_C 0b00000001 // Carry
 
 struct registers {
     // 16-bit program counter
@@ -42,12 +42,11 @@ extern struct registers regs;
  *  $FFFC, $FFFD  RES (Reset) vector
  *  $FFFE, $FFFF  IRQ (Interrupt Request) vector
  */
-extern byte mem[0x10000];  // 64KB memory
-extern byte opcode;        // opcode
+extern byte mem[0x10000]; // 64KB memory
+extern byte opcode; // opcode
 extern byte *operand;
 
-enum addressing_mode
-{
+enum addressing_mode {
     NONE,
     ACC,
     ABS,
