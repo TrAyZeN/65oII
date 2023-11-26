@@ -1,5 +1,4 @@
 #include "cpu.h"
-
 #include "instructions.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -18,15 +17,15 @@ byte *operand;
 byte counter;
 
 byte read_8() {
-    return mem[regs.PC++];
+    return mem[regs.pc++];
 }
 
 word read_16() {
-    return mem[regs.PC++] | (mem[regs.PC++] << 8);
+    return mem[regs.pc++] | (mem[regs.pc++] << 8);
 }
 
 void push(byte b) {
-    mem[STACK_OFFSET + regs.SP++] = b;
+    mem[STACK_OFFSET + regs.sp++] = b;
 }
 
 void push_word(word w) {
@@ -35,46 +34,46 @@ void push_word(word w) {
 }
 
 byte pull() {
-    return mem[STACK_OFFSET + regs.SP--];
+    return mem[STACK_OFFSET + regs.sp--];
 }
 
 void update_flag(byte val, byte flag) {
     if (val)
-        regs.SR |= flag;
+        regs.sr |= flag;
     else
-        regs.SR &= ~flag;
+        regs.sr &= ~flag;
 }
 
 byte is_flag_set(byte flag) {
-    return regs.SR & flag;
+    return regs.sr & flag;
 }
 
 byte *read_operand() {
     switch (addrmode_table[opcode]) {
     case ACC:
-        return &regs.A;
+        return &regs.a;
     case ABS:
         return &mem[read_16()];
     case ABSX:
-        return &mem[read_16() + regs.X];
+        return &mem[read_16() + regs.x];
     case ABSY:
-        return &mem[read_16() + regs.Y];
+        return &mem[read_16() + regs.y];
     case IMM:
-        return &mem[regs.PC++];
+        return &mem[regs.pc++];
     case IND:
         return &mem[mem[read_16()]];
     case XIND:
-        return &mem[mem[read_8() + regs.X]];
+        return &mem[mem[read_8() + regs.x]];
     case INDY:
-        return &mem[mem[read_8()] + regs.Y];
+        return &mem[mem[read_8()] + regs.y];
     case REL:
-        return &mem[regs.PC++];
+        return &mem[regs.pc++];
     case ZPG:
         return &mem[read_8()];
     case ZPGX:
-        return &mem[read_8() + regs.X];
+        return &mem[read_8() + regs.x];
     case ZPGY:
-        return &mem[read_8() + regs.Y];
+        return &mem[read_8() + regs.y];
     default:
         printf("Error : invalid addressing mode\n");
         exit(EXIT_FAILURE);
@@ -84,9 +83,9 @@ byte *read_operand() {
 void reset() {
     int i;
 
-    regs.PC = RAM_OFFSET;
-    regs.SP = 0;
-    regs.SR = 0b00100000;
+    regs.pc = RAM_OFFSET;
+    regs.sp = 0;
+    regs.sr = 0b00100000;
     counter = 0;
 
     for (i = 0; i < 64000; i++) {
@@ -94,11 +93,11 @@ void reset() {
     }
 }
 
-void load_ROM(const char *filename) {
+void load_rom(const char *filename) {
     FILE *f;
     int op;
 
-    regs.PC = RAM_OFFSET;
+    regs.pc = RAM_OFFSET;
 
     f = fopen(filename, "rb");
     if (f == NULL) {
@@ -107,17 +106,17 @@ void load_ROM(const char *filename) {
     }
 
     while ((op = fgetc(f)) != EOF) {
-        mem[regs.PC++] = op;
+        mem[regs.pc++] = op;
     }
 
     fclose(f);
 
-    regs.PC = RAM_OFFSET;
+    regs.pc = RAM_OFFSET;
 }
 
 void run() {
     for (;;) {
-        opcode = mem[regs.PC++];
+        opcode = mem[regs.pc++];
         operand = read_operand();
         instructions_table[opcode]();
 

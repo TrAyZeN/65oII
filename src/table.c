@@ -6,22 +6,22 @@
 void (* instructions_table[256])() =
 {
 //        00   01   02   03   04   05   06   07   08   09   0A   0B   0C   0D   0E   0F
-/* 00 */ BRK, ORA, IOP, IOP, IOP, ORA, ASL, IOP, PHP, ORA, ASL, IOP, IOP, ORA, ASL, IOP,
-/* 10 */ BPL, ORA, IOP, IOP, IOP, ORA, ASL, IOP, CLC, ORA, IOP, IOP, IOP, ORA, ASL, IOP,
-/* 20 */ JSR, AND, IOP, IOP, BIT, AND, NIP, IOP, PLP, AND, NIP, IOP, NIP, AND, NIP, IOP,
-/* 30 */ BMI, AND, IOP, IOP, IOP, AND, NIP, IOP, SEC, AND, IOP, IOP, IOP, AND, NIP, IOP,
-/* 40 */ RTI, EOR, IOP, IOP, IOP, EOR, LSR, IOP, PHA, EOR, LSR, IOP, JMP, EOR, LSR, IOP,
-/* 50 */ BVC, EOR, IOP, IOP, IOP, EOR, LSR, IOP, CLI, EOR, IOP, IOP, IOP, EOR, LSR, IOP,
-/* 60 */ RTS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, PLA, NIP, NIP, IOP, JMP, NIP, NIP, IOP,
-/* 70 */ BVS, NIP, IOP, IOP, IOP, NIP, NIP, IOP, SEI, NIP, IOP, IOP, IOP, NIP, NIP, IOP,
-/* 80 */ IOP, STA, IOP, IOP, STY, STA, STX, IOP, DEY, IOP, TXA, IOP, STY, STA, STX, IOP,
-/* 90 */ BCC, STA, IOP, IOP, STY, STA, STX, IOP, TYA, STA, TXS, IOP, IOP, STA, IOP, IOP,
-/* A0 */ LDY, LDA, LDX, IOP, LDY, LDA, LDX, IOP, TAY, LDA, TAX, IOP, LDY, LDA, LDX, IOP,
-/* B0 */ BCS, LDA, IOP, IOP, LDY, LDA, LDX, IOP, NIP, LDA, TSX, IOP, LDY, LDA, LDX, IOP,
-/* C0 */ CPY, CMP, IOP, IOP, CPY, CMP, DEC, IOP, INY, CMP, DEX, IOP, CPY, CMP, DEC, IOP,
-/* D0 */ BNE, CMP, IOP, IOP, IOP, CMP, DEC, IOP, CLD, CMP, IOP, IOP, IOP, CMP, DEC, IOP,
-/* E0 */ CPX, SBC, IOP, IOP, CPX, SBC, INC, IOP, INX, SBC, NOP, IOP, CPX, SBC, INC, IOP,
-/* F0 */ BEQ, SBC, IOP, IOP, IOP, SBC, INC, IOP, SED, SBC, IOP, IOP, IOP, SBC, INC, IOP
+/* 00 */ ibrk, ora, iop, iop, iop, ora, asl, iop, php, ora, asl, iop, iop, ora, asl, iop,
+/* 10 */ bpl, ora, iop, iop, iop, ora, asl, iop, clc, ora, iop, iop, iop, ora, asl, iop,
+/* 20 */ jsr, and, iop, iop, bit, and, nip, iop, plp, and, nip, iop, nip, and, nip, iop,
+/* 30 */ bmi, and, iop, iop, iop, and, nip, iop, sec, and, iop, iop, iop, and, nip, iop,
+/* 40 */ rti, eor, iop, iop, iop, eor, lsr, iop, pha, eor, lsr, iop, jmp, eor, lsr, iop,
+/* 50 */ bvc, eor, iop, iop, iop, eor, lsr, iop, cli, eor, iop, iop, iop, eor, lsr, iop,
+/* 60 */ rts, nip, iop, iop, iop, nip, nip, iop, pla, nip, nip, iop, jmp, nip, nip, iop,
+/* 70 */ bvs, nip, iop, iop, iop, nip, nip, iop, sei, nip, iop, iop, iop, nip, nip, iop,
+/* 80 */ iop, sta, iop, iop, sty, sta, stx, iop, dey, iop, txa, iop, sty, sta, stx, iop,
+/* 90 */ bcc, sta, iop, iop, sty, sta, stx, iop, tya, sta, txs, iop, iop, sta, iop, iop,
+/* A0 */ ldy, lda, ldx, iop, ldy, lda, ldx, iop, tay, lda, tax, iop, ldy, lda, ldx, iop,
+/* B0 */ bcs, lda, iop, iop, ldy, lda, ldx, iop, nip, lda, tsx, iop, ldy, lda, ldx, iop,
+/* C0 */ cpy, cmp, iop, iop, cpy, cmp, dec, iop, iny, cmp, dex, iop, cpy, cmp, dec, iop,
+/* D0 */ bne, cmp, iop, iop, iop, cmp, dec, iop, cld, cmp, iop, iop, iop, cmp, dec, iop,
+/* E0 */ cpx, sbc, iop, iop, cpx, sbc, inc, iop, inx, sbc, nop, iop, cpx, sbc, inc, iop,
+/* F0 */ beq, sbc, iop, iop, iop, sbc, inc, iop, sed, sbc, iop, iop, iop, sbc, inc, iop
 };
 
 const unsigned char cycles_table[256] =

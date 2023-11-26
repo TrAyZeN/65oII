@@ -1,45 +1,44 @@
-#include "instructions.h"
-
 #include "cpu.h"
+#include "instructions.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "utils.h"
 
-void ADC() {
+void adc() {
     int i;
     byte a, b, cin, cout;
     cin = is_flag_set(SR_C);
 
     if (is_flag_set(SR_D)) {
         for (i = 0; i < 2; i++) {
-            a = (regs.A & 0xF << i * 4) >> i * 4;
+            a = (regs.a & 0xF << i * 4) >> i * 4;
             b = ((*operand) & 0xF << i * 4) >> i * 4;
 
             byte r = a + b + cin
                 + 6; // simple addition and + 6 to convert back to BCD
             cout = r & 0x10;
 
-            regs.A = (regs.A | 0xF << i * 4) & (r & 0xF) << i * 4;
+            regs.a = (regs.a | 0xF << i * 4) & (r & 0xF) << i * 4;
 
             cin = cout;
         }
     } else {
-        regs.A = full_adder(regs.A, (*operand), &cin);
+        regs.a = full_adder(regs.a, (*operand), &cin);
     }
 
     update_flag(cin, SR_C);
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void AND() {
-    regs.A &= (*operand);
+void and () {
+    regs.a &= (*operand);
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 8, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 8, SR_N);
 }
 
-void ASL() {
+void asl() {
     update_flag((*operand) >> 7, SR_C);
 
     *operand <<= 1;
@@ -48,188 +47,188 @@ void ASL() {
     update_flag((*operand) >> 7, SR_N);
 }
 
-void BCC() {
+void bcc() {
     if (!is_flag_set(SR_C)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BCS() {
+void bcs() {
     if (is_flag_set(SR_C)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BEQ() {
+void beq() {
     if (is_flag_set(SR_Z)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BIT() {
+void bit() {
     update_flag((*operand) & 0b10000000, SR_N);
     update_flag((*operand) & 0b01000000, SR_V);
-    update_flag(((*operand) & regs.A) == 0x00, SR_Z);
+    update_flag(((*operand) & regs.a) == 0x00, SR_Z);
 }
 
-void BMI() {
+void bmi() {
     if (is_flag_set(SR_N)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BNE() {
+void bne() {
     if (!is_flag_set(SR_Z)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BPL() {
+void bpl() {
     if (!is_flag_set(SR_N)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BRK() {
+void ibrk() {
     update_flag(1, SR_I);
-    push(regs.PC + 2);
-    push(regs.SR);
-    regs.PC = mem[0xFFFF] | (mem[0xFFFF] << 8);
+    push(regs.pc + 2);
+    push(regs.sr);
+    regs.pc = mem[0xFFFF] | (mem[0xFFFF] << 8);
 }
 
-void BVC() {
+void bvc() {
     if (!is_flag_set(SR_V)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void BVS() {
+void bvs() {
     if (is_flag_set(SR_V)) {
-        regs.PC = regs.PC + (char)(*operand);
+        regs.pc = regs.pc + (char)(*operand);
     }
 }
 
-void CLC() {
+void clc() {
     update_flag(0, SR_C);
 }
 
-void CLD() {
+void cld() {
     update_flag(0, SR_D);
 }
 
-void CLI() {
+void cli() {
     update_flag(0, SR_I);
 }
 
-void CLV() {
+void clv() {
     update_flag(0, SR_V);
 }
 
 // TODO: carry flag
-void CMP() {
+void cmp() {
     byte r;
-    r = regs.A - (*operand);
+    r = regs.a - (*operand);
 
     update_flag(!r, SR_Z);
     update_flag(r >> 7, SR_N);
 }
 
-void CPX() {
+void cpx() {
     byte r;
-    r = regs.X - (*operand);
+    r = regs.x - (*operand);
 
     update_flag(!r, SR_Z);
     update_flag(r >> 7, SR_N);
 }
 
-void CPY() {
+void cpy() {
     byte r;
-    r = regs.Y - (*operand);
+    r = regs.y - (*operand);
 
     update_flag(!r, SR_Z);
     update_flag(r >> 7, SR_N);
 }
 
-void DEC() {
+void dec() {
     (*operand)--;
 
     update_flag(!(*operand), SR_Z);
     update_flag((*operand) >> 7, SR_N);
 }
 
-void DEX() {
-    regs.X--;
+void dex() {
+    regs.x--;
 
-    update_flag(!regs.X, SR_Z);
-    update_flag(regs.X >> 7, SR_N);
+    update_flag(!regs.x, SR_Z);
+    update_flag(regs.x >> 7, SR_N);
 }
 
-void DEY() {
-    regs.Y--;
+void dey() {
+    regs.y--;
 
-    update_flag(!regs.Y, SR_Z);
-    update_flag(regs.Y >> 7, SR_N);
+    update_flag(!regs.y, SR_Z);
+    update_flag(regs.y >> 7, SR_N);
 }
 
-void EOR() {
-    regs.A ^= (*operand);
+void eor() {
+    regs.a ^= (*operand);
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void INC() {
+void inc() {
     (*operand)++;
 
     update_flag(!(*operand), SR_Z);
     update_flag((*operand) >> 7, SR_N);
 }
 
-void INX() {
-    regs.X++;
+void inx() {
+    regs.x++;
 
-    update_flag(!regs.X, SR_Z);
-    update_flag(regs.X >> 7, SR_N);
+    update_flag(!regs.x, SR_Z);
+    update_flag(regs.x >> 7, SR_N);
 }
 
-void INY() {
-    regs.Y++;
+void iny() {
+    regs.y++;
 
-    update_flag(!regs.Y, SR_Z);
-    update_flag(regs.Y >> 7, SR_N);
+    update_flag(!regs.y, SR_Z);
+    update_flag(regs.y >> 7, SR_N);
 }
 
-void JMP() {
-    regs.PC = (*operand);
+void jmp() {
+    regs.pc = (*operand);
 }
 
-void JSR() {
-    push_word(regs.PC + 2);
-    regs.PC = (*operand);
+void jsr() {
+    push_word(regs.pc + 2);
+    regs.pc = (*operand);
 }
 
-void LDA() {
-    regs.A = (*operand);
+void lda() {
+    regs.a = (*operand);
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void LDX() {
-    regs.X = (*operand);
+void ldx() {
+    regs.x = (*operand);
 
-    update_flag(!regs.X, SR_Z);
-    update_flag(regs.X >> 7, SR_N);
+    update_flag(!regs.x, SR_Z);
+    update_flag(regs.x >> 7, SR_N);
 }
 
-void LDY() {
-    regs.Y = (*operand);
+void ldy() {
+    regs.y = (*operand);
 
-    update_flag(!regs.Y, SR_Z);
-    update_flag(regs.Y >> 7, SR_N);
+    update_flag(!regs.y, SR_Z);
+    update_flag(regs.y >> 7, SR_N);
 }
 
-void LSR() {
+void lsr() {
     update_flag((*operand) & 0b00000001, SR_C);
 
     *operand >>= 1;
@@ -238,56 +237,56 @@ void LSR() {
     update_flag((*operand) >> 7, SR_N);
 }
 
-void NOP() {
+void nop() {
 }
 
-void ORA() {
-    regs.A |= (*operand);
+void ora() {
+    regs.a |= (*operand);
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void PHA() {
-    push(regs.A);
+void pha() {
+    push(regs.a);
 }
 
-void PHP() {
-    push(regs.SR);
+void php() {
+    push(regs.sr);
 }
 
-void PLA() {
-    regs.A = pull();
+void pla() {
+    regs.a = pull();
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void PLP() {
-    regs.SR = pull();
+void plp() {
+    regs.sr = pull();
 }
 
-void RTI() {
-    regs.SR = pull();
-    regs.PC = pull();
+void rti() {
+    regs.sr = pull();
+    regs.pc = pull();
 }
 
-void RTS() {
-    regs.PC = pull() | pull() << 4;
-    regs.PC++;
+void rts() {
+    regs.pc = pull() | pull() << 4;
+    regs.pc++;
 }
 
-void SBC() {
+void sbc() {
     int i;
     byte a, b, bin, bout;
     bin = is_flag_set(SR_C);
 
     for (i = 0; i < 8; i++) {
-        a = regs.A >> i;
+        a = regs.a >> i;
         b = (*operand) >> i;
 
         bout = (~a & bin) | (~a & b) | (b & bin);
-        regs.A |= ((a ^ b) ^ bin) << i;
+        regs.a |= ((a ^ b) ^ bin) << i;
 
         bin = bout;
     }
@@ -297,76 +296,76 @@ void SBC() {
     update_flag(*operand >> 7, SR_N);
 }
 
-void SEC() {
+void sec() {
     update_flag(1, SR_C);
 }
 
-void SED() {
+void sed() {
     update_flag(1, SR_D);
 }
 
-void SEI() {
+void sei() {
     update_flag(1, SR_I);
 }
 
-void STA() {
-    *operand = regs.A;
+void sta() {
+    *operand = regs.a;
 }
 
-void STX() {
-    *operand = regs.X;
+void stx() {
+    *operand = regs.x;
 }
 
-void STY() {
-    *operand = regs.Y;
+void sty() {
+    *operand = regs.y;
 }
 
-void TAX() {
-    regs.X = regs.A;
+void tax() {
+    regs.x = regs.a;
 
-    update_flag(!regs.X, SR_Z);
-    update_flag(regs.X >> 7, SR_N);
+    update_flag(!regs.x, SR_Z);
+    update_flag(regs.x >> 7, SR_N);
 }
 
-void TAY() {
-    regs.Y = regs.A;
+void tay() {
+    regs.y = regs.a;
 
-    update_flag(!regs.Y, SR_Z);
-    update_flag(regs.Y >> 7, SR_N);
+    update_flag(!regs.y, SR_Z);
+    update_flag(regs.y >> 7, SR_N);
 }
 
-void TSX() {
-    regs.X = regs.SP;
+void tsx() {
+    regs.x = regs.sp;
 
-    update_flag(!regs.X, SR_Z);
-    update_flag(regs.X >> 7, SR_N);
+    update_flag(!regs.x, SR_Z);
+    update_flag(regs.x >> 7, SR_N);
 }
 
-void TXA() {
-    regs.A = regs.X;
+void txa() {
+    regs.a = regs.x;
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void TXS() {
-    regs.SP = regs.X;
+void txs() {
+    regs.sp = regs.x;
 }
 
-void TYA() {
-    regs.A = regs.Y;
+void tya() {
+    regs.a = regs.y;
 
-    update_flag(!regs.A, SR_Z);
-    update_flag(regs.A >> 7, SR_N);
+    update_flag(!regs.a, SR_Z);
+    update_flag(regs.a >> 7, SR_N);
 }
 
-void NIP() {
+void nip() {
     printf("Not Implemented Operation : %02X\n", opcode);
     exit(EXIT_FAILURE);
 }
 
-void IOP() {
+void iop() {
     printf("Invalid Operation : %02X\n", opcode);
-    printf("PC : $%04X\n", regs.PC);
+    printf("PC : $%04X\n", regs.pc);
     exit(EXIT_FAILURE);
 }

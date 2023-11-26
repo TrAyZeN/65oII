@@ -12,116 +12,119 @@ extern void (*instructions_table[256])();
 extern const unsigned char cycles_table[256];
 extern const enum addressing_mode addrmode_table[256];
 
-void ADC(); // Add Memory to Accumulator with Carry
+void adc(); // Add Memory to Accumulator with Carry
 
-void AND(); // AND Memory with Accumulator
+// clang-format off
+void and(); // AND Memory with Accumulator
+// clang-format on
 
-void ASL(); // Shift Left One Bit (Memory or Accumulator)
+void asl(); // Shift Left One Bit (Memory or Accumulator)
 
-void BCC(); // Branch on Carry Clear
+void bcc(); // Branch on Carry Clear
 
-void BCS(); // Branch on Carry Set
+void bcs(); // Branch on Carry Set
 
-void BEQ(); // Branch on Result Zero
+void beq(); // Branch on Result Zero
 
-void BIT(); // Test Bits in Memory with Accumulator
+void bit(); // Test Bits in Memory with Accumulator
 
-void BMI(); // Branch on Result Minus
+void bmi(); // Branch on Result Minus
 
-void BNE(); // Branch on Result not Zero
+void bne(); // Branch on Result not Zero
 
-void BPL(); // Branch on Result Plus
+void bpl(); // Branch on Result Plus
 
-void BRK(); // Force Break
+// WARN: brk naming conflicts with glibc function
+void ibrk(); // Force Break
 
-void BVC(); // Branch on Overflow Clear
+void bvc(); // Branch on Overflow Clear
 
-void BVS(); // Branch on Overflow Set
+void bvs(); // Branch on Overflow Set
 
-void CLC(); // Clear Carry Flag
+void clc(); // Clear Carry Flag
 
-void CLD(); // Clear Decimal Mode
+void cld(); // Clear Decimal Mode
 
-void CLI(); // Clear Interrupt Disable Bit
+void cli(); // Clear Interrupt Disable Bit
 
-void CLV(); // Clear Overflow Flag
+void clv(); // Clear Overflow Flag
 
-void CMP(); // Compare Memory with Accumulator
+void cmp(); // Compare Memory with Accumulator
 
-void CPX(); // Compare Memory and Index X
+void cpx(); // Compare Memory and Index X
 
-void CPY(); // Compare Memory and Index Y
+void cpy(); // Compare Memory and Index Y
 
-void DEC(); // Decrement Memory by One
+void dec(); // Decrement Memory by One
 
-void DEX(); // Decrement Index X by One
+void dex(); // Decrement Index X by One
 
-void DEY(); // Decrement Index Y by One
+void dey(); // Decrement Index Y by One
 
-void EOR(); // Exclusive-OR Memory with Accumulator
+void eor(); // Exclusive-OR Memory with Accumulator
 
-void INC(); // Increment Memory by One
+void inc(); // Increment Memory by One
 
-void INX(); // Increment Index X by One
+void inx(); // Increment Index X by One
 
-void INY(); // Increment Index Y by One
+void iny(); // Increment Index Y by One
 
-void JMP(); // Jump to New Location
+void jmp(); // Jump to New Location
 
-void JSR(); // Jump to New Location Saving Return Adress
+void jsr(); // Jump to New Location Saving Return Adress
 
-void LDA(); // Load Accumulator with Memory
+void lda(); // Load Accumulator with Memory
 
-void LDX(); // Load Index X with Memory
+void ldx(); // Load Index X with Memory
 
-void LDY(); // Load Index Y with Memory
+void ldy(); // Load Index Y with Memory
 
-void LSR(); // Shift One Bit Right (Memory or Accumulator)
+void lsr(); // Shift One Bit Right (Memory or Accumulator)
 
-void NOP(); // No Operation
+void nop(); // No Operation
 
-void ORA(); // OR Memory with Accumulator
+void ora(); // OR Memory with Accumulator
 
-void PHA(); // Push Accumulator on Stack
+void pha(); // Push Accumulator on Stack
 
-void PHP(); // Push Processor Status on Stack
+void php(); // Push Processor Status on Stack
 
-void PLA(); // Pull Accumulator from Stack
+void pla(); // Pull Accumulator from Stack
 
-void PLP(); // Pull Processor Status from Stack
+void plp(); // Pull Processor Status from Stack
 
-void RTI(); // Return from Interrupt
+void rti(); // Return from Interrupt
 
-void RTS(); // Return from Subroutine
+void rts(); // Return from Subroutine
 
-void SBC(); // Substract Memory from Accumulator with Borrow
+void sbc(); // Substract Memory from Accumulator with Borrow
 
-void SEC(); // Set Carry Flag
+void sec(); // Set Carry Flag
 
-void SED(); // Set Decimal Flag
+void sed(); // Set Decimal Flag
 
-void SEI(); // Set Interrupt Disable Status
+void sei(); // Set Interrupt Disable Status
 
-void STA(); // Store Accumulator in Memory
+void sta(); // Store Accumulator in Memory
 
-void STX(); // Store Index X in Memory
+void stx(); // Store Index X in Memory
 
-void STY(); // Store Index Y in Memory
+void sty(); // Store Index Y in Memory
 
-void TAX(); // Transfer Accumulator to Index X
+void tax(); // Transfer Accumulator to Index X
 
-void TAY(); // Transfer Accumulator to Index Y
+void tay(); // Transfer Accumulator to Index Y
 
-void TSX(); // Transfer Stack Pointer to Index X
+void tsx(); // Transfer Stack Pointer to Index X
 
-void TXA(); // Transfer Index X to Accumulator
+void txa(); // Transfer Index X to Accumulator
 
-void TXS(); // Transfer Index X to Stack Register
+void txs(); // Transfer Index X to Stack Register
 
-void TYA(); // Transfer Index Y to Accumulator
+void tya(); // Transfer Index Y to Accumulator
 
-void NIP(); // Not Implemented
+void nip(); // Not Implemented
 
-void IOP(); // Invalid Operation
+void iop(); // Invalid Operation
 
 #endif

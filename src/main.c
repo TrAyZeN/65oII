@@ -11,8 +11,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     reset();
-    load_ROM(argv[1]);
-    memoryDump(RAM_OFFSET, 0x30);
+    load_rom(argv[1]);
+    dump_memory(RAM_OFFSET, 0x31);
 
     run();
 

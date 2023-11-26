@@ -1,6 +1,5 @@
-#include "utils.h"
-
 #include "cpu.h"
+#include "utils.h"
 
 byte full_adder(const byte a, const byte b, byte *c) {
     int i;
@@ -21,7 +20,7 @@ byte full_adder(const byte a, const byte b, byte *c) {
     return r;
 }
 
-byte BCD_adder(byte a, byte b, byte *c) {
+byte bcd_adder(byte a, byte b, byte *c) {
     int i;
     byte ba, bb, cin, cout, r, rr;
 

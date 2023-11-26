@@ -1,9 +1,8 @@
-#include "debug.h"
-
 #include "cpu.h"
+#include "debug.h"
 #include "stdio.h"
 
-void memoryDump(int start, int length) {
+void dump_memory(int start, int length) {
     int i;
 
     for (i = start; i < start + length; i++) {

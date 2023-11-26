@@ -1,6 +1,6 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-void memoryDump(int start, int length);
+void dump_memory(int start, int length);
 
 #endif

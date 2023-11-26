@@ -20,16 +20,16 @@ typedef unsigned short word;
 
 struct registers {
     // 16-bit program counter
-    word PC;
+    word pc;
     // 8-bit accumulator register
-    byte A;
+    byte a;
     // 8-bit index registers
-    byte X;
-    byte Y;
+    byte x;
+    byte y;
     // 8-bit status register [NV-BDIZC]
-    byte SR;
+    byte sr;
     // 8-bit stack pointer
-    byte SP;
+    byte sp;
 };
 
 extern struct registers regs;
@@ -76,7 +76,7 @@ byte is_flag_set(byte flag);
 byte *read_operand();
 
 void reset();
-void load_ROM(const char *filename);
+void load_rom(const char *filename);
 void run();
 
 #endif
