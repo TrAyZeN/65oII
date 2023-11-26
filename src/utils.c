@@ -2,14 +2,12 @@
 
 #include "cpu.h"
 
-byte full_adder(const byte a, const byte b, byte *c)
-{
+byte full_adder(const byte a, const byte b, byte *c) {
     int i;
     byte ba, bb, cin, cout, r;
 
     cin = *c;
-    for (i = 0, r = 0; i < 8; i++)
-    {
+    for (i = 0, r = 0; i < 8; i++) {
         ba = a >> i & 1;
         bb = b >> i & 1;
 
@@ -23,20 +21,19 @@ byte full_adder(const byte a, const byte b, byte *c)
     return r;
 }
 
-byte BCD_adder(byte a, byte b, byte *c)
-{
+byte BCD_adder(byte a, byte b, byte *c) {
     int i;
     byte ba, bb, cin, cout, r, rr;
 
     cin = *c;
-    for (i = 0, r = 0; i < 2; i++)
-    {
-        ba = (a & 0xF << i*4) >> i*4;
-        bb = (b & 0xF << i*4) >> i*4;
+    for (i = 0, r = 0; i < 2; i++) {
+        ba = (a & 0xF << i * 4) >> i * 4;
+        bb = (b & 0xF << i * 4) >> i * 4;
 
-        rr = ba + bb + cin + 6;         // simple addition and + 6 to convert back to BCD
+        rr =
+            ba + bb + cin + 6; // simple addition and + 6 to convert back to BCD
 
-        r |= (rr & 0xF) << i*4;
+        r |= (rr & 0xF) << i * 4;
         cout = rr & 0x10;
 
         cin = cout;
@@ -45,4 +42,3 @@ byte BCD_adder(byte a, byte b, byte *c)
     *c = cout;
     return r;
 }
-

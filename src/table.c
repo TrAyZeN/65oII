@@ -1,5 +1,7 @@
-#include "instructions.h"
 #include "cpu.h"
+#include "instructions.h"
+
+// clang-format off
 
 void (* instructions_table[256])() =
 {
@@ -64,3 +66,4 @@ const enum addressing_mode addrmode_table[256] =
 /* F0 */  REL, INDY, NONE, NONE, NONE, ZPGX, ZPGX, NONE, IMPL, ABSY, NONE, NONE, NONE, ABSX, ABSX, NONE
 };
 
+// clang-format on

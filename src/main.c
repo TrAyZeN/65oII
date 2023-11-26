@@ -1,13 +1,11 @@
 #include "cpu.h"
 #include "debug.h"
 #include "instructions.h"
-#include "utils.h"
 #include "stdio.h"
+#include "utils.h"
 
-int main(int argc, char *argv[])
-{
-    if (argc < 2)
-    {
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
         printf("Not enough argument provided, \
             use -h flag for more information\n");
         return 1;
@@ -20,4 +18,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

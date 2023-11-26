@@ -24,7 +24,7 @@ $(BINDIR)/emulator: $(EMU_OBJS)
 
 $(BINDIR)/disassembler:
 	@mkdir -p $(@D)
-	$(CC) disassembler/disassembler.c -o $@ -I./disassembler/
+	$(CC) disassembler/disassembler.c -o $@ -I disassembler
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
@@ -37,3 +37,7 @@ clean:
 .PHONY: mrproper
 mrproper:
 	rm -rf $(BUILDDIR)
+
+.PHONY: fmt
+fmt:
+	clang-format --style=file -i src/**.[ch] disassembler/**.[ch]

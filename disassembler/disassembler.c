@@ -1,7 +1,8 @@
 #include "disassembler.h"
-
 #include "stdio.h"
 #include "stdlib.h"
+
+// clang-format off
 
 char *nemonic_table[256] =
 {
@@ -61,44 +62,42 @@ unsigned char bytes_table[256] =
 /* 0F */  2, 2, 0, 0, 0, 2, 2, 0, 1, 3, 0, 0, 0, 3, 3, 0
 };
 
-void disassemble(const char *in_filename, const char *out_filename)
-{
+// clang-format on
+
+void disassemble(const char *in_filename, const char *out_filename) {
     FILE *in_file, *out_file;
     char opcode;
     unsigned char next_byte, next_next_byte;
 
     in_file = fopen(in_filename, "rb");
-    if (in_file == NULL)
-    {
+    if (in_file == NULL) {
         printf("Error : Failed to open input file");
         exit(EXIT_FAILURE);
     }
 
     out_file = fopen(out_filename, "w");
-    if (out_file == NULL)
-    {
+    if (out_file == NULL) {
         printf("Error : Failed to open output file");
         exit(EXIT_FAILURE);
     }
 
-    while ((opcode = fgetc(in_file)) != EOF)
-    {
-        switch (bytes_table[(unsigned char) opcode])
-        {
-            case 1:
-                fprintf(out_file, nemonic_table[(unsigned char) opcode]);
+    while ((opcode = fgetc(in_file)) != EOF) {
+        switch (bytes_table[(unsigned char)opcode]) {
+        case 1:
+            fprintf(out_file, nemonic_table[(unsigned char)opcode]);
             break;
-            case 2:
-                next_byte = fgetc(in_file);
-                fprintf(out_file, nemonic_table[(unsigned char) opcode], next_byte);
+        case 2:
+            next_byte = fgetc(in_file);
+            fprintf(out_file, nemonic_table[(unsigned char)opcode], next_byte);
             break;
-            case 3:
-                next_byte = fgetc(in_file);
-                next_next_byte = fgetc(in_file);
-                fprintf(out_file, nemonic_table[(unsigned char) opcode], next_next_byte, next_byte);
+        case 3:
+            next_byte = fgetc(in_file);
+            next_next_byte = fgetc(in_file);
+            fprintf(out_file, nemonic_table[(unsigned char)opcode],
+                    next_next_byte, next_byte);
             break;
-            default:
-                printf("Invalid opcode : %02X\n", (unsigned char) opcode);
+        default:
+            printf("Invalid opcode : %02X\n", (unsigned char)opcode);
             break;
         }
         fprintf(out_file, "\n");
@@ -108,10 +107,8 @@ void disassemble(const char *in_filename, const char *out_filename)
     fclose(out_file);
 }
 
-int main()
-{
-    disassemble ("rom", "rom.asm");
+int main() {
+    disassemble("rom", "rom.asm");
 
     return 0;
 }
-
