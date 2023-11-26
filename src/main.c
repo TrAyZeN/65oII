@@ -8,9 +8,9 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-	printf("Not enough argument provided, \
-	    use -h flag for more information\n");
-	return 1;
+        printf("Not enough argument provided, \
+            use -h flag for more information\n");
+        return 1;
     }
     reset();
     load_ROM(argv[1]);

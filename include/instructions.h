@@ -8,7 +8,7 @@
 #define INLINE __inline
 #endif
 
-void (* instructions_table[256])();
+extern void (* instructions_table[256])();
 extern const unsigned char cycles_table[256];
 extern const enum addressing_mode addrmode_table[256];
 
@@ -125,4 +125,3 @@ void NIP();         // Not Implemented
 void IOP();         // Invalid Operation
 
 #endif
-

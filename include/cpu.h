@@ -8,11 +8,6 @@ typedef unsigned short word;
 #define STACK_OFFSET 0x0100
 #define RAM_OFFSET   0x0200
 
-byte A;             // 8-bit accumulator register
-byte X, Y;          // 8-bit index registers
-byte SP;            // 8-bit stack pointer
-word PC;            // 16-bit program counter
-
 // SR flags
 #define N 0b10000000    // Negative
 #define V 0b01000000    // Overflow
@@ -22,7 +17,22 @@ word PC;            // 16-bit program counter
 #define I 0b00000100    // Interrupt (IRQ disable)
 #define Z 0b00000010    // Zero
 #define C 0b00000001    // Carry
-byte SR;            // 8-bit status register [NV-BDIZC]
+
+struct registers {
+    // 16-bit program counter
+    word PC;
+    // 8-bit accumulator register
+    byte A;
+    // 8-bit index registers
+    byte X;
+    byte Y;
+    // 8-bit status register [NV-BDIZC]
+    byte SR;
+    // 8-bit stack pointer
+    byte SP;
+};
+
+extern struct registers regs;
 
 /*
  *  $0000, $00FF  zero page RAM
@@ -32,9 +42,9 @@ byte SR;            // 8-bit status register [NV-BDIZC]
  *  $FFFC, $FFFD  RES (Reset) vector
  *  $FFFE, $FFFF  IRQ (Interrupt Request) vector
  */
-byte mem[0x10000];  // 64KB memory
-byte opcode;        // opcode
-byte *operand;
+extern byte mem[0x10000];  // 64KB memory
+extern byte opcode;        // opcode
+extern byte *operand;
 
 enum addressing_mode
 {
@@ -54,8 +64,6 @@ enum addressing_mode
     ZPGY
 };
 
-byte counter;
-
 byte read_8();
 word read_16();
 
@@ -73,4 +81,3 @@ void load_ROM(const char *filename);
 void run();
 
 #endif
-

@@ -10,19 +10,26 @@
 #include "unistd.h"
 #endif
 
+struct registers regs;
+byte mem[0x10000];
+byte opcode;
+byte *operand;
+
+byte counter;
+
 byte read_8()
 {
-    return mem[PC++];
+    return mem[regs.PC++];
 }
 
 word read_16()
 {
-    return mem[PC++] | (mem[PC++] << 8);
+    return mem[regs.PC++] | (mem[regs.PC++] << 8);
 }
 
 void push(byte b)
 {
-    mem[STACK_OFFSET + SP++] = b;
+    mem[STACK_OFFSET + regs.SP++] = b;
 }
 
 void push_word(word w)
@@ -33,20 +40,20 @@ void push_word(word w)
 
 byte pull()
 {
-    return mem[STACK_OFFSET + SP--];
+    return mem[STACK_OFFSET + regs.SP--];
 }
 
 void update_flag(byte val, byte flag)
 {
     if (val)
-        SR |= flag;
+        regs.SR |= flag;
     else
-        SR &= ~flag;
+        regs.SR &= ~flag;
 }
 
 byte is_flag_set(byte flag)
 {
-    return SR & flag;
+    return regs.SR & flag;
 }
 
 byte *read_operand()
@@ -54,32 +61,32 @@ byte *read_operand()
     switch (addrmode_table[opcode])
     {
         case  ACC:
-            return &A;
+            return &regs.A;
         case  ABS:
             return &mem[read_16()];
         case ABSX:
-            return &mem[read_16() + X];
+            return &mem[read_16() + regs.X];
         case ABSY:
-            return &mem[read_16() + Y];
+            return &mem[read_16() + regs.Y];
         case  IMM:
-            return &mem[PC++];
+            return &mem[regs.PC++];
         case  IND:
             return &mem[mem[read_16()]];
         case XIND:
-            return &mem[mem[read_8() + X]];
+            return &mem[mem[read_8() + regs.X]];
         case INDY:
-            return &mem[mem[read_8()] + Y];
+            return &mem[mem[read_8()] + regs.Y];
         case  REL:
-            return &mem[PC++];
+            return &mem[regs.PC++];
         case  ZPG:
             return &mem[read_8()];
         case ZPGX:
-            return &mem[read_8() + X];
+            return &mem[read_8() + regs.X];
         case ZPGY:
-            return &mem[read_8() + Y];
-	default:
-	    printf("Error : invalid addressing mode\n");
-	    exit(EXIT_FAILURE);
+            return &mem[read_8() + regs.Y];
+    default:
+        printf("Error : invalid addressing mode\n");
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -87,13 +94,14 @@ void reset()
 {
     int i;
 
-    PC = RAM_OFFSET;
-    SP = 0;
-    SR = 0b00100000;
+    regs.PC = RAM_OFFSET;
+    regs.SP = 0;
+    regs.SR = 0b00100000;
     counter = 0;
 
-    for (i = 0; i < 64000; i++)
+    for (i = 0; i < 64000; i++) {
         mem[i] = 0;
+    }
 }
 
 void load_ROM(const char *filename)
@@ -101,7 +109,7 @@ void load_ROM(const char *filename)
     FILE *f;
     int op;
 
-    PC = RAM_OFFSET;
+    regs.PC = RAM_OFFSET;
 
     f = fopen(filename, "rb");
     if (f == NULL)
@@ -110,23 +118,23 @@ void load_ROM(const char *filename)
         exit(EXIT_FAILURE);
     }
 
-    while ((op = fgetc(f)) != EOF)
-        mem[PC++] = op;
+    while ((op = fgetc(f)) != EOF) {
+        mem[regs.PC++] = op;
+    }
 
     fclose(f);
 
-    PC = RAM_OFFSET;
+    regs.PC = RAM_OFFSET;
 }
 
 void run()
 {
     for (;;)
     {
-        opcode = mem[PC++];
+        opcode = mem[regs.PC++];
         operand = read_operand();
         instructions_table[opcode]();
 
         //sleep(1.0 / CLOCK_SPEED);
     }
 }
-

@@ -1,4 +1,6 @@
-CFLAGS := -Wall -Wextra -I ./include/
+CPPFLAGS := -I include
+CFLAGS := -Wall -Wextra 
+LDFLAGS :=
 
 BUILDDIR := build
 OBJDIR := $(BUILDDIR)/obj
@@ -26,7 +28,7 @@ $(BINDIR)/disassembler:
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
@@ -35,4 +37,3 @@ clean:
 .PHONY: mrproper
 mrproper:
 	rm -rf $(BUILDDIR)
-
