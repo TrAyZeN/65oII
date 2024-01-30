@@ -1,7 +1,7 @@
-#include "disassembler.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "stdio.h"
-#include "stdlib.h"
+#include "disassembler.h"
 
 // clang-format off
 
@@ -67,7 +67,7 @@ unsigned char bytes_table[256] =
 
 void disassemble(const char *in_filename, const char *out_filename) {
     FILE *in_file, *out_file;
-    char opcode;
+    int opcode;
     unsigned char next_byte, next_next_byte;
 
     in_file = fopen(in_filename, "rb");
@@ -88,12 +88,12 @@ void disassemble(const char *in_filename, const char *out_filename) {
             fprintf(out_file, nemonic_table[(unsigned char)opcode]);
             break;
         case 2:
-            next_byte = fgetc(in_file);
+            next_byte = (unsigned char)fgetc(in_file);
             fprintf(out_file, nemonic_table[(unsigned char)opcode], next_byte);
             break;
         case 3:
-            next_byte = fgetc(in_file);
-            next_next_byte = fgetc(in_file);
+            next_byte = (unsigned char)fgetc(in_file);
+            next_next_byte = (unsigned char)fgetc(in_file);
             fprintf(out_file, nemonic_table[(unsigned char)opcode],
                     next_next_byte, next_byte);
             break;

@@ -1,12 +1,14 @@
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "cpu.h"
 #include "instructions.h"
-#include "stdio.h"
-#include "stdlib.h"
 
 #ifdef _WIN32
-#include "Windows.h"
+#include <Windows.h>
 #else
-#include "unistd.h"
+#include <unistd.h>
 #endif
 
 byte read_8(struct emu_state *state) {
@@ -87,17 +89,14 @@ void reset(struct emu_state *state) {
 }
 
 void load_rom(struct emu_state *state, const char *filename) {
-    FILE *f;
-    int op;
-
     state->regs.pc = RAM_OFFSET;
 
-    f = fopen(filename, "rb");
+    FILE *f = fopen(filename, "rb");
     if (f == NULL) {
-        printf("Error : Failed to open file\n");
-        exit(EXIT_FAILURE);
+        err(EXIT_FAILURE, "Failed to open file");
     }
 
+    int op;
     while ((op = fgetc(f)) != EOF) {
         state->mem[state->regs.pc++] = (byte)op;
     }

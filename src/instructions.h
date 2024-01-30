@@ -1,5 +1,6 @@
 #ifndef INSTRUCTIONS_H_
 #define INSTRUCTIONS_H_
+
 #include "cpu.h"
 
 #ifdef __C99__

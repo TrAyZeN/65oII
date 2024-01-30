@@ -1,7 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "cpu.h"
 #include "instructions.h"
-#include "stdio.h"
-#include "stdlib.h"
 #include "utils.h"
 
 void adc(struct emu_state *state) {
