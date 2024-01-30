@@ -1,6 +1,6 @@
 CC ?= gcc
 
-CPPFLAGS := -MMD -Iinclude
+CPPFLAGS := -MMD -I src
 CFLAGS := -std=gnu99 -Wall -Wextra -Wshadow -Wdouble-promotion -Wundef \
 	 -Wconversion -Wsign-conversion -Wformat=2 -funsigned-char
 LDFLAGS :=
@@ -43,6 +43,6 @@ mrproper:
 
 .PHONY: fmt
 fmt:
-	clang-format --style=file -i src/**.[ch] include/**.h disassembler/**.[ch]
+	clang-format --style=file -i src/**.[ch] disassembler/**.[ch]
 
 -include $(DEPS)
