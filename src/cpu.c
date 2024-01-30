@@ -22,8 +22,8 @@ void push(struct emu_state *state, byte b) {
 }
 
 void push_word(struct emu_state *state, word w) {
-    push(state, w & 0xFF);
-    push(state, w >> 8);
+    push(state, (byte)(w & 0xFF));
+    push(state, (byte)(w >> 8));
 }
 
 byte pull(struct emu_state *state) {
@@ -99,7 +99,7 @@ void load_rom(struct emu_state *state, const char *filename) {
     }
 
     while ((op = fgetc(f)) != EOF) {
-        state->mem[state->regs.pc++] = op;
+        state->mem[state->regs.pc++] = (byte)op;
     }
 
     fclose(f);

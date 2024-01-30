@@ -5,26 +5,26 @@
 #include "utils.h"
 
 void adc(struct emu_state *state) {
-    byte cin = is_flag_set(state, SR_C);
+    byte c_in = is_flag_set(state, SR_C);
 
     if (is_flag_set(state, SR_D)) {
         for (int i = 0; i < 2; i++) {
             byte a = (state->regs.a & 0xF << i * 4) >> i * 4;
             byte b = ((*state->operand) & 0xF << i * 4) >> i * 4;
 
-            byte r = a + b + cin
+            byte r = a + b + c_in
                 + 6; // simple addition and + 6 to convert back to BCD
-            byte cout = r & 0x10;
+            byte c_out = r & 0x10;
 
             state->regs.a = (state->regs.a | 0xF << i * 4) & (r & 0xF) << i * 4;
 
-            cin = cout;
+            c_in = c_out;
         }
     } else {
-        state->regs.a = full_adder(state->regs.a, (*state->operand), &cin);
+        state->regs.a = full_adder(state->regs.a, (*state->operand), &c_in);
     }
 
-    update_flag(state, cin, SR_C);
+    update_flag(state, c_in, SR_C);
     update_flag(state, !state->regs.a, SR_Z);
     update_flag(state, state->regs.a >> 7, SR_N);
 }
@@ -93,7 +93,7 @@ void ibrk(struct emu_state *state) {
     update_flag(state, 1, SR_I);
     push(state, state->regs.pc + 2);
     push(state, state->regs.sr);
-    state->regs.pc = state->mem[0xFFFF] | (state->mem[0xFFFF] << 8);
+    state->regs.pc = (state->mem[0xFFFF] << 8) | state->mem[0xFFFF];
 }
 
 void bvc(struct emu_state *state) {
@@ -277,20 +277,20 @@ void rts(struct emu_state *state) {
 }
 
 void sbc(struct emu_state *state) {
-    byte bout;
-    byte bin = is_flag_set(state, SR_C);
+    byte b_out;
+    byte b_in = is_flag_set(state, SR_C);
 
     for (int i = 0; i < 8; i++) {
         byte a = state->regs.a >> i;
         byte b = (*state->operand) >> i;
 
-        bout = (~a & bin) | (~a & b) | (b & bin);
-        state->regs.a |= ((a ^ b) ^ bin) << i;
+        b_out = (~a & b_in) | (~a & b) | (b & b_in);
+        state->regs.a |= ((a ^ b) ^ b_in) << i;
 
-        bin = bout;
+        b_in = b_out;
     }
 
-    update_flag(state, bout, SR_C);
+    update_flag(state, b_out, SR_C);
     update_flag(state, !(*state->operand), SR_Z);
     update_flag(state, *state->operand >> 7, SR_N);
 }
