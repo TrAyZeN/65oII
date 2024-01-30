@@ -5,18 +5,16 @@
 #include "utils.h"
 
 void adc(struct emu_state *state) {
-    int i;
-    byte a, b, cin, cout;
-    cin = is_flag_set(state, SR_C);
+    byte cin = is_flag_set(state, SR_C);
 
     if (is_flag_set(state, SR_D)) {
-        for (i = 0; i < 2; i++) {
-            a = (state->regs.a & 0xF << i * 4) >> i * 4;
-            b = ((*state->operand) & 0xF << i * 4) >> i * 4;
+        for (int i = 0; i < 2; i++) {
+            byte a = (state->regs.a & 0xF << i * 4) >> i * 4;
+            byte b = ((*state->operand) & 0xF << i * 4) >> i * 4;
 
             byte r = a + b + cin
                 + 6; // simple addition and + 6 to convert back to BCD
-            cout = r & 0x10;
+            byte cout = r & 0x10;
 
             state->regs.a = (state->regs.a | 0xF << i * 4) & (r & 0xF) << i * 4;
 
@@ -279,13 +277,12 @@ void rts(struct emu_state *state) {
 }
 
 void sbc(struct emu_state *state) {
-    int i;
-    byte a, b, bin, bout;
-    bin = is_flag_set(state, SR_C);
+    byte bout;
+    byte bin = is_flag_set(state, SR_C);
 
-    for (i = 0; i < 8; i++) {
-        a = state->regs.a >> i;
-        b = (*state->operand) >> i;
+    for (int i = 0; i < 8; i++) {
+        byte a = state->regs.a >> i;
+        byte b = (*state->operand) >> i;
 
         bout = (~a & bin) | (~a & b) | (b & bin);
         state->regs.a |= ((a ^ b) ^ bin) << i;

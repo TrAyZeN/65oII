@@ -54,4 +54,14 @@ mrproper:
 fmt:
 	clang-format --style=file -i src/**.[ch] disassembler/**.[ch]
 
+.PHONY: cppcheck
+cppcheck:
+	cppcheck \
+		--std=c99 -I src \
+		--enable=all \
+		--suppress=missingInclude --suppress=missingIncludeSystem \
+		--inline-suppr \
+		-q --error-exitcode=1 \
+		src/**.[ch]
+
 -include $(DEPS)
