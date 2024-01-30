@@ -1,11 +1,20 @@
 CC ?= gcc
 
-CPPFLAGS := -MMD -I src
-CFLAGS := -std=gnu99 -Wall -Wextra -Wshadow -Wdouble-promotion -Wundef \
+CPPFLAGS += -MMD -I src
+CFLAGS += -std=gnu99 -Wall -Wextra -Wshadow -Wdouble-promotion -Wundef \
 	 -Wconversion -Wsign-conversion -Wformat=2 -funsigned-char
-LDFLAGS :=
+LDFLAGS +=
 
-BUILDDIR := build
+ifeq ($(ASAN),1)
+	CFLAGS += -fsanitize=address
+	LDFLAGS += -fsanitize=address
+endif
+ifeq ($(UBSAN),1)
+	CFLAGS += -fsanitize=undefined
+	LDFLAGS += -fsanitize=undefined
+endif
+
+BUILDDIR ?= build
 OBJDIR := $(BUILDDIR)/obj
 BINDIR := $(BUILDDIR)/bin
 
